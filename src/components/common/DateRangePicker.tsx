@@ -24,10 +24,10 @@ function formatDisplay(dateStr: string): string {
 }
 
 const MONTHS = [
-  'January','February','March','April','May','June',
-  'July','August','September','October','November','December'
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
 ];
-const DAYS = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+const DAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
 function getDaysInMonth(year: number, month: number) {
   return new Date(year, month + 1, 0).getDate();
@@ -59,7 +59,7 @@ export default function DateRangePicker({ value, onChange, label, className, pla
   const firstDay = getFirstDayOfWeek(viewYear, viewMonth);
 
   const toDateStr = (y: number, m: number, d: number) =>
-    `${y}-${String(m + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 
   const handleDayClick = (dateStr: string) => {
     if (selecting === 'from') {
@@ -120,8 +120,8 @@ export default function DateRangePicker({ value, onChange, label, className, pla
           start || end
             ? 'bg-primary text-white font-semibold'
             : inRange
-            ? 'bg-[hsl(211,91%,92%)] text-primary'
-            : 'hover:bg-secondary text-foreground'
+              ? 'bg-[hsl(211,91%,92%)] text-primary'
+              : 'hover:bg-secondary text-foreground'
         )}
       >
         {d}
@@ -140,7 +140,7 @@ export default function DateRangePicker({ value, onChange, label, className, pla
             )}
           >
             {label && <span className="text-[#000000e0] mr-1">{label}:</span>}
-            <span className="font-medium text-[#000000e0]">
+            <span className="font-semibold text-[#000000e0]">
               {formatDisplay(value.from)} - {formatDisplay(value.to)}
             </span>
             <svg className="h-3.5 w-3.5 text-[#00000099] shrink-0 ml-0.5" viewBox="0 0 24 24" fill="currentColor">

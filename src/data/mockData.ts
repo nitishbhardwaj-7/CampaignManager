@@ -67,7 +67,7 @@ export interface Ad {
 
 export const mockCampaigns: Campaign[] = [
   {
-    id: '701234567890',
+    id: '4839201847',
     name: 'Q2 2026 Brand Awareness - MENA',
     objective: 'Brand Awareness',
     status: 'Active',
@@ -87,7 +87,7 @@ export const mockCampaigns: Campaign[] = [
     adCount: 9,
   },
   {
-    id: '701234567891',
+    id: '9203847291',
     name: 'Lead Gen - Enterprise Software',
     objective: 'Lead Generation',
     status: 'Active',
@@ -107,7 +107,7 @@ export const mockCampaigns: Campaign[] = [
     adCount: 15,
   },
   {
-    id: '701234567892',
+    id: '1092837465',
     name: 'Website Visits - Product Launch',
     objective: 'Website Visits',
     status: 'Paused',
@@ -127,7 +127,7 @@ export const mockCampaigns: Campaign[] = [
     adCount: 6,
   },
   {
-    id: '701234567893',
+    id: '5748392018',
     name: 'Q3 Engagement Campaign',
     objective: 'Engagement',
     status: 'Draft',
@@ -147,7 +147,7 @@ export const mockCampaigns: Campaign[] = [
     adCount: 3,
   },
   {
-    id: '701234567894',
+    id: '8392018472',
     name: 'Video Views - Thought Leadership',
     objective: 'Video Views',
     status: 'Completed',
@@ -170,8 +170,8 @@ export const mockCampaigns: Campaign[] = [
 
 export const mockAdSets: AdSet[] = [
   {
-    id: 'as-1001',
-    campaignId: '701234567890',
+    id: '3948201948',
+    campaignId: '4839201847',
     campaignName: 'Q2 2026 Brand Awareness - MENA',
     name: 'UAE Decision Makers - Desktop',
     status: 'Active',
@@ -185,8 +185,8 @@ export const mockAdSets: AdSet[] = [
     endDate: '2026-06-30',
   },
   {
-    id: 'as-1002',
-    campaignId: '701234567890',
+    id: '8392049283',
+    campaignId: '4839201847',
     campaignName: 'Q2 2026 Brand Awareness - MENA',
     name: 'Saudi Arabia CxOs',
     status: 'Active',
@@ -200,8 +200,8 @@ export const mockAdSets: AdSet[] = [
     endDate: '2026-06-30',
   },
   {
-    id: 'as-1003',
-    campaignId: '701234567891',
+    id: '2019482039',
+    campaignId: '9203847291',
     campaignName: 'Lead Gen - Enterprise Software',
     name: 'Retargeting - Website Visitors',
     status: 'Active',
@@ -215,8 +215,8 @@ export const mockAdSets: AdSet[] = [
     endDate: '2026-07-31',
   },
   {
-    id: 'as-1004',
-    campaignId: '701234567891',
+    id: '7483920491',
+    campaignId: '9203847291',
     campaignName: 'Lead Gen - Enterprise Software',
     name: 'Cold Audience - Enterprise',
     status: 'Paused',
@@ -230,8 +230,8 @@ export const mockAdSets: AdSet[] = [
     endDate: '2026-07-31',
   },
   {
-    id: 'as-1005',
-    campaignId: '701234567892',
+    id: '5839201938',
+    campaignId: '1092837465',
     campaignName: 'Website Visits - Product Launch',
     name: 'Product Launch Audience',
     status: 'Paused',
@@ -248,9 +248,9 @@ export const mockAdSets: AdSet[] = [
 
 export const mockAds: Ad[] = [
   {
-    id: 'ad-2001',
-    campaignId: '701234567890',
-    adSetId: 'as-1001',
+    id: '8392019482',
+    campaignId: '4839201847',
+    adSetId: '3948201948',
     adSetName: 'UAE Decision Makers - Desktop',
     campaignName: 'Q2 2026 Brand Awareness - MENA',
     name: 'Redington MENA - Innovation Ad v1',
@@ -265,9 +265,9 @@ export const mockAds: Ad[] = [
     imageUrl: '',
   },
   {
-    id: 'ad-2002',
-    campaignId: '701234567890',
-    adSetId: 'as-1001',
+    id: '2938492019',
+    campaignId: '4839201847',
+    adSetId: '3948201948',
     adSetName: 'UAE Decision Makers - Desktop',
     campaignName: 'Q2 2026 Brand Awareness - MENA',
     name: 'Redington MENA - Innovation Ad v2',
@@ -282,9 +282,9 @@ export const mockAds: Ad[] = [
     imageUrl: '',
   },
   {
-    id: 'ad-2003',
-    campaignId: '701234567891',
-    adSetId: 'as-1003',
+    id: '9482019482',
+    campaignId: '9203847291',
+    adSetId: '2019482039',
     adSetName: 'Retargeting - Website Visitors',
     campaignName: 'Lead Gen - Enterprise Software',
     name: 'Lead Gen Form Ad - Enterprise',
@@ -299,9 +299,9 @@ export const mockAds: Ad[] = [
     imageUrl: '',
   },
   {
-    id: 'ad-2004',
-    campaignId: '701234567891',
-    adSetId: 'as-1003',
+    id: '1092837482',
+    campaignId: '9203847291',
+    adSetId: '2019482039',
     adSetName: 'Retargeting - Website Visitors',
     campaignName: 'Lead Gen - Enterprise Software',
     name: 'Lead Gen Form Ad - SMB',
@@ -316,9 +316,9 @@ export const mockAds: Ad[] = [
     imageUrl: '',
   },
   {
-    id: 'ad-2005',
-    campaignId: '701234567892',
-    adSetId: 'as-1005',
+    id: '7483920192',
+    campaignId: '1092837465',
+    adSetId: '5839201938',
     adSetName: 'Product Launch Audience',
     campaignName: 'Website Visits - Product Launch',
     name: 'Product Launch Carousel',

@@ -50,6 +50,7 @@ export default function CampaignTable() {
     deleteCampaigns,
     bulkPause,
     bulkResume,
+    clearAdSetSelection,
   } = useCampaigns();
 
   const navigate = useNavigate();
@@ -179,67 +180,6 @@ export default function CampaignTable() {
 
   return (
     <div className="flex flex-col h-full bg-white">
-      {/* Bulk action bar */}
-      {someSelected && (
-        <div className="flex items-center gap-2 px-4 py-2 bg-[#f4f7fa] border-b border-[#d8e2ee] shrink-0">
-          <span className="inline-flex items-center justify-center text-[11px] font-medium bg-[#2d6e4f] text-white px-4 py-[3px] rounded-full border border-[#1b4332] select-none">
-            {selectedArr.length} selected
-          </span>
-          <div className="h-4 w-px bg-[#d8e2ee] mx-1" />
-          <button 
-            className="text-xs font-medium text-[#0A66C2] hover:underline px-2 py-1"
-            onClick={handleBulkPause}
-          >
-            Pause
-          </button>
-          <button 
-            className="text-xs font-medium text-[#0A66C2] hover:underline px-2 py-1"
-            onClick={handleBulkResume}
-          >
-            Resume
-          </button>
-          <button 
-            className="text-xs font-medium text-[#0A66C2] hover:underline px-2 py-1"
-            onClick={handleExport}
-          >
-            Export
-          </button>
-          <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-            <AlertDialogTrigger asChild>
-              <button
-                className="text-xs font-medium text-red-600 hover:underline px-2 py-1"
-              >
-                Delete
-              </button>
-            </AlertDialogTrigger>
-            <AlertDialogContent className="max-w-[calc(100%-2rem)] md:max-w-lg">
-              <AlertDialogHeader>
-                <AlertDialogTitle>Delete {selectedArr.length} campaign(s)?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. The selected campaigns and their associated ad sets
-                  and ads will be permanently deleted.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleDelete}
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                >
-                  Delete
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-          <div className="flex-1" />
-          <button
-            className="text-xs font-medium text-[#0A66C2] hover:underline px-2 py-1"
-            onClick={clearCampaignSelection}
-          >
-            Clear selection
-          </button>
-        </div>
-      )}
 
       {/* Table */}
       <div className="w-full max-w-full overflow-x-auto bg-white">
@@ -370,13 +310,19 @@ export default function CampaignTable() {
                   <td className="px-4 py-3.5 max-w-xs">
                     <button
                       className="text-left group focus:outline-none"
-                      onClick={() => navigate(`/campaign/${campaign.id}`)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        clearCampaignSelection();
+                        toggleCampaignSelection(campaign.id);
+                        clearAdSetSelection();
+                        navigate('/adsets');
+                      }}
                     >
                       <span className="text-[13px] font-medium text-[#0a66c2] group-hover:underline block truncate max-w-[280px]">
                         {campaign.name}
                       </span>
                       <span className="text-[11px] text-[#00000099] block mt-0.5">
-                        {campaign.id} · {campaign.objective}
+                        ID: {campaign.id} · {campaign.objective}
                       </span>
                     </button>
                   </td>

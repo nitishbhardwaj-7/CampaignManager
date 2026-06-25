@@ -70,12 +70,16 @@ export default function AdsPage() {
     toggleAdActive,
     deleteAds,
     selectedCampaignIds,
+    selectedAdSetIds,
     filters,
     updateFilters,
   } = useCampaigns();
 
   const campaignSelectedArr = useMemo(() => Array.from(selectedCampaignIds), [selectedCampaignIds]);
   const hasCampaignSelection = campaignSelectedArr.length > 0;
+
+  const adSetSelectedArr = useMemo(() => Array.from(selectedAdSetIds), [selectedAdSetIds]);
+  const hasAdSetSelection = adSetSelectedArr.length > 0;
 
   const [search, setSearch] = useState('');
   const filterCount = (filters.status !== 'All' ? 1 : 0);
@@ -90,6 +94,9 @@ export default function AdsPage() {
     if (hasCampaignSelection) {
       res = res.filter(a => selectedCampaignIds.has(a.campaignId));
     }
+    if (hasAdSetSelection) {
+      res = res.filter(a => selectedAdSetIds.has(a.adSetId));
+    }
     if (q) {
       res = res.filter(a =>
         a.name.toLowerCase().includes(q) || a.id.toLowerCase().includes(q)
@@ -99,7 +106,7 @@ export default function AdsPage() {
       res = res.filter(a => a.status === filters.status);
     }
     return res;
-  }, [ads, search, filters.status, selectedCampaignIds, hasCampaignSelection]);
+  }, [ads, search, filters.status, selectedCampaignIds, hasCampaignSelection, selectedAdSetIds, hasAdSetSelection]);
 
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) => {
@@ -211,9 +218,14 @@ export default function AdsPage() {
                   </span>
                 );
               } else if (tab.id === 'ads') {
-                labelText = hasCampaignSelection
-                  ? `Ads for ${campaignSelectedArr.length} campaign${campaignSelectedArr.length > 1 ? 's' : ''}`
-                  : 'Ads';
+                if (hasAdSetSelection) {
+                  labelText = `Ads for ${adSetSelectedArr.length} ad set${adSetSelectedArr.length > 1 ? 's' : ''}`;
+                } else if (hasCampaignSelection) {
+                  labelText = `Ads for ${campaignSelectedArr.length} campaign${campaignSelectedArr.length > 1 ? 's' : ''}`;
+                } else {
+                  labelText = 'Ads';
+                }
+
                 if (selectedArr.length > 0) {
                   badge = (
                     <span className="inline-flex items-center justify-center text-[11px] font-medium bg-[#2d6e4f] text-white px-4 py-[3px] rounded-full border border-[#1b4332] ml-2 select-none">
@@ -221,10 +233,14 @@ export default function AdsPage() {
                     </span>
                   );
                 } else {
-                  const filteredAdsCount = hasCampaignSelection
-                    ? ads.filter(a => selectedCampaignIds.has(a.campaignId)).length
-                    : ads.length;
-                  badge = hasCampaignSelection ? (
+                  let filteredAdsCount = ads.length;
+                  if (hasAdSetSelection) {
+                    filteredAdsCount = ads.filter(a => selectedAdSetIds.has(a.adSetId)).length;
+                  } else if (hasCampaignSelection) {
+                    filteredAdsCount = ads.filter(a => selectedCampaignIds.has(a.campaignId)).length;
+                  }
+
+                  badge = (hasAdSetSelection || hasCampaignSelection) ? (
                     <span className="text-xs text-[#00000099] font-normal ml-2">
                       {filteredAdsCount} total
                     </span>
@@ -467,7 +483,7 @@ export default function AdsPage() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center text-[13px] text-[#000000e0] hover:underline focus:outline-none select-none">
-                    <span>Columns: <span className="font-medium">Performance</span></span>
+                    <span>Columns: <span className="font-semibold">Performance</span></span>
                     <svg className="h-3.5 w-3.5 text-[#00000099] shrink-0 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M7 10l5 5 5-5z" />
                     </svg>
@@ -509,7 +525,7 @@ export default function AdsPage() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center text-[13px] text-[#000000e0] hover:underline focus:outline-none select-none">
-                    <span>Compare: <span className="font-medium">{filters.compareMode}</span></span>
+                    <span>Compare: <span className="font-semibold">{filters.compareMode}</span></span>
                     <svg className="h-3.5 w-3.5 text-[#00000099] shrink-0 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M7 10l5 5 5-5z" />
                     </svg>
@@ -636,7 +652,7 @@ export default function AdsPage() {
                         </td>
                         <td className="px-4 py-3.5 max-w-[220px]">
                           <p className="text-[13px] font-medium text-[#0a66c2] truncate max-w-[280px]">{ad.name}</p>
-                          <p className="text-[11px] text-[#00000099] truncate mt-0.5">{ad.id} · {ad.adSetName}</p>
+                          <p className="text-[11px] text-[#00000099] truncate mt-0.5">ID: {ad.id} · {ad.adSetName}</p>
                         </td>
                         <td className="px-4 py-3.5 text-center w-20">
                           <CampaignToggle

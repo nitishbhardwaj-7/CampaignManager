@@ -63,8 +63,10 @@ export default function CampaignsDashboard() {
     adSets,
     ads,
     selectedCampaignIds,
+    selectedAdSetIds,
     deleteCampaigns,
     clearCampaignSelection,
+    clearAdSetSelection,
   } = useCampaigns();
 
   const [activeTab, setActiveTab] = useState<TabId>('campaigns');
@@ -72,6 +74,8 @@ export default function CampaignsDashboard() {
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   const selectedArr = Array.from(selectedCampaignIds);
+  const adSetSelectedArr = Array.from(selectedAdSetIds);
+  const hasAdSetSelection = adSetSelectedArr.length > 0;
   const hasFilters =
     filters.status !== 'All' || filters.search !== '';
   const filterCount = filters.status !== 'All' ? 1 : 0;
@@ -157,13 +161,22 @@ export default function CampaignsDashboard() {
                   </span>
                 );
               } else if (tab.id === 'ads') {
-                labelText = isSelected
-                  ? `Ads for ${selectedArr.length} campaign${selectedArr.length > 1 ? 's' : ''}`
-                  : 'Ads';
-                const filteredAdsCount = isSelected
-                  ? ads.filter(a => selectedCampaignIds.has(a.campaignId)).length
-                  : ads.length;
-                badge = isSelected ? (
+                if (hasAdSetSelection) {
+                  labelText = `Ads for ${adSetSelectedArr.length} ad set${adSetSelectedArr.length > 1 ? 's' : ''}`;
+                } else if (isSelected) {
+                  labelText = `Ads for ${selectedArr.length} campaign${selectedArr.length > 1 ? 's' : ''}`;
+                } else {
+                  labelText = 'Ads';
+                }
+
+                let filteredAdsCount = ads.length;
+                if (hasAdSetSelection) {
+                  filteredAdsCount = ads.filter(a => selectedAdSetIds.has(a.adSetId)).length;
+                } else if (isSelected) {
+                  filteredAdsCount = ads.filter(a => selectedCampaignIds.has(a.campaignId)).length;
+                }
+
+                badge = (hasAdSetSelection || isSelected) ? (
                   <span className="text-xs text-[#00000099] font-normal ml-2">
                     {filteredAdsCount} total
                   </span>
@@ -419,7 +432,7 @@ export default function CampaignsDashboard() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center text-[13px] text-[#000000e0] hover:underline focus:outline-none select-none">
-                    <span>Columns: <span className="font-medium">Performance</span></span>
+                    <span>Columns: <span className="font-semibold">Performance</span></span>
                     <svg className="h-3.5 w-3.5 text-[#00000099] shrink-0 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M7 10l5 5 5-5z" />
                     </svg>
@@ -461,7 +474,7 @@ export default function CampaignsDashboard() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center text-[13px] text-[#000000e0] hover:underline focus:outline-none select-none">
-                    <span>Compare: <span className="font-medium">{filters.compareMode}</span></span>
+                    <span>Compare: <span className="font-semibold">{filters.compareMode}</span></span>
                     <svg className="h-3.5 w-3.5 text-[#00000099] shrink-0 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M7 10l5 5 5-5z" />
                     </svg>
