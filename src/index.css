@@ -1,0 +1,198 @@
+/* stylelint-disable */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* LinkedIn Ads Campaign Manager Design System */
+
+@layer base {
+  :root {
+    --radius: 0.25rem;
+
+    /* LinkedIn Blue as primary */
+    --primary: 211 91% 40%;          /* #0A66C2 */
+    --primary-foreground: 0 0% 100%;
+
+    /* Backgrounds */
+    --background: 216 17% 95%;       /* #F3F2EF light workspace */
+    --foreground: 0 0% 10%;          /* #191919 */
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+
+    /* Secondary / muted grays */
+    --secondary: 214 32% 91%;        /* #E9EEF5 */
+    --secondary-foreground: 0 0% 10%;
+
+    --muted: 216 17% 95%;
+    --muted-foreground: 214 14% 47%; /* #5E6C84 */
+
+    --accent: 214 32% 91%;
+    --accent-foreground: 0 0% 10%;
+
+    /* Status */
+    --success: 136 74% 31%;          /* #057642 active green */
+    --warning: 38 92% 50%;
+    --info: 211 91% 40%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Borders & inputs */
+    --border: 0 0% 88%;              /* #E0E0E0 */
+    --input: 0 0% 88%;
+    --ring: 211 91% 40%;
+
+    /* Charts */
+    --chart-1: 211 91% 40%;
+    --chart-2: 136 74% 31%;
+    --chart-3: 38 92% 50%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+
+    /* Sidebar - white with subtle border */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 0 0% 10%;
+    --sidebar-primary: 211 91% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 214 32% 91%;
+    --sidebar-accent-foreground: 211 91% 40%;
+    --sidebar-border: 0 0% 88%;
+    --sidebar-ring: 211 91% 40%;
+
+    /* LinkedIn custom tokens */
+    --linkedin-blue: 211 91% 40%;
+    --linkedin-blue-hover: 211 91% 35%;
+    --linkedin-light: 214 32% 91%;
+    --status-active: 136 74% 31%;
+    --status-paused: 220 9% 68%;     /* #A8ADBB */
+    --status-draft: 38 92% 50%;
+  }
+
+  .dark {
+    --primary: 211 80% 58%;
+    --primary-foreground: 0 0% 100%;
+    --background: 220 13% 9%;
+    --foreground: 210 40% 98%;
+    --card: 220 13% 12%;
+    --card-foreground: 210 40% 98%;
+    --popover: 220 13% 12%;
+    --popover-foreground: 210 40% 98%;
+    --secondary: 220 13% 16%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 220 13% 16%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 220 13% 16%;
+    --accent-foreground: 210 40% 98%;
+    --success: 136 60% 42%;
+    --warning: 38 92% 50%;
+    --info: 211 80% 58%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 20%;
+    --input: 220 13% 20%;
+    --ring: 211 80% 58%;
+    --chart-1: 211 80% 58%;
+    --chart-2: 136 60% 42%;
+    --chart-3: 38 92% 50%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --sidebar-background: 220 13% 10%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 211 80% 58%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 13% 16%;
+    --sidebar-accent-foreground: 211 80% 58%;
+    --sidebar-border: 220 13% 20%;
+    --sidebar-ring: 211 80% 58%;
+    --linkedin-blue: 211 80% 58%;
+    --linkedin-blue-hover: 211 80% 50%;
+    --linkedin-light: 220 13% 16%;
+    --status-active: 136 60% 42%;
+    --status-paused: 220 9% 50%;
+    --status-draft: 38 80% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+    font-size: 14px;
+  }
+
+  /* Scrollbar styling */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 3px;
+  }
+}
+
+/* LinkedIn-specific utility classes */
+@layer utilities {
+  .li-btn-primary {
+    @apply bg-primary text-primary-foreground font-semibold text-sm rounded px-4 py-1.5
+           hover:bg-[hsl(var(--linkedin-blue-hover))] transition-colors duration-150;
+  }
+
+  .li-btn-secondary {
+    @apply bg-card text-foreground font-medium text-sm rounded px-3 py-1.5
+           border border-border hover:bg-secondary transition-colors duration-150;
+  }
+
+  .status-badge-active {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
+           bg-[hsl(136,74%,90%)] text-[hsl(var(--status-active))];
+  }
+
+  .status-badge-paused {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
+           bg-[hsl(220,9%,92%)] text-[hsl(var(--status-paused))];
+  }
+
+  .status-badge-draft {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
+           bg-[hsl(38,92%,92%)] text-[hsl(38,70%,40%)];
+  }
+
+  .status-badge-completed {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium
+           bg-[hsl(211,91%,92%)] text-[hsl(var(--linkedin-blue))];
+  }
+
+  .table-header-cell {
+    @apply text-xs font-semibold text-muted-foreground uppercase tracking-wide
+           bg-[hsl(216,17%,97%)] px-3 py-3 whitespace-nowrap;
+  }
+
+  .table-body-cell {
+    @apply px-3 py-3 text-sm whitespace-nowrap;
+  }
+
+  .sidebar-nav-item {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium
+           text-sidebar-foreground hover:bg-sidebar-accent
+           transition-colors duration-150 cursor-pointer w-full;
+  }
+
+  .sidebar-nav-item-active {
+    @apply text-primary bg-[hsl(211,91%,95%)] border-l-2 border-primary;
+  }
+}
