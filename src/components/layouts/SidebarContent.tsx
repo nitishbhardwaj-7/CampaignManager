@@ -77,10 +77,10 @@ export default function SidebarContent({ onNavigate, collapsed = false }: Sideba
             <img src="/images/download-removebg-preview.png" alt="Redington logo" className="w-full h-full object-contain" />
           </div>
           <div className="flex-1 min-w-0">
-            <h2 className="text-[13.5px] font-bold text-[#000000e0] leading-snug truncate">
+            <h2 className="text-[15px] font-bold text-[#000000e0] leading-snug truncate">
               Redington MENA
             </h2>
-            <div className="text-[10.5px] text-[#00000099] flex items-center gap-1 leading-none mt-0.5">
+            <div className="text-[12px] text-[#00000099] flex items-center gap-1 leading-none mt-0.5">
               <span>513550058</span>
               <span className="w-1 h-1 rounded-full bg-[#057642]" />
               <span className="text-[#057642] font-semibold">Active</span>
@@ -109,11 +109,11 @@ export default function SidebarContent({ onNavigate, collapsed = false }: Sideba
               key={item.label}
               onClick={() => handleNav(item)}
               className={cn(
-                'w-full flex items-center justify-between text-left transition-all duration-150 py-2',
+                'w-full flex items-center justify-between text-left transition-all duration-150 py-2.5',
                 collapsed ? 'justify-center px-2' : 'px-5',
                 active
-                  ? 'text-[#000000e0] font-bold border-l-[3px] border-[#0A66C2] bg-transparent'
-                  : 'text-[#00000099] font-normal hover:text-[#000000e0] hover:bg-[#00000005]'
+                  ? 'text-[#000000e0] font-semibold border-l-[3px] border-[#0A66C2] bg-transparent'
+                  : 'text-[#00000099] font-medium hover:text-[#000000e0] hover:bg-[#00000005]'
               )}
               style={{
                 paddingLeft: active && !collapsed ? '17px' : undefined, // offset left border
@@ -122,7 +122,7 @@ export default function SidebarContent({ onNavigate, collapsed = false }: Sideba
             >
               {!collapsed && (
                 <>
-                  <span className="text-[13.5px] tracking-tight">{item.label}</span>
+                  <span className="text-[15px] tracking-tight">{item.label}</span>
                   {item.external && (
                     <ExternalLink className="h-3 w-3 text-[#00000099] shrink-0" />
                   )}

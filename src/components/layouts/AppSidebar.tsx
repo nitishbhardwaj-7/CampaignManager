@@ -10,7 +10,7 @@ export default function AppSidebar() {
     <aside
       className={cn(
         'hidden lg:flex flex-col shrink-0 transition-all duration-250 ease-in-out',
-        sidebarCollapsed ? 'w-14' : 'w-60'
+        sidebarCollapsed ? 'w-14' : 'w-[280px]'
       )}
     >
       <SidebarContent collapsed={sidebarCollapsed} />
