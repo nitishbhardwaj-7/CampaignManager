@@ -91,20 +91,14 @@ export default function AppHeader() {
           <HelpCircle className="h-5 w-5 text-[#000000e0]" />
         </Button>
 
-        {/* User avatar */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              size="icon"
-              className="rounded-full overflow-hidden p-0 w-8 h-8 border border-border"
+              className="rounded-full overflow-hidden p-0 w-8 h-8 bg-[#56687a] hover:bg-[#56687a]/90 text-white font-bold text-[14px] flex items-center justify-center border-none focus-visible:ring-0"
               aria-label="User profile"
             >
-              <img
-                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&h=80&q=80"
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
+              D
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
