@@ -71,7 +71,7 @@ export default function SidebarContent({ onNavigate, collapsed = false }: Sideba
     <div className="flex flex-col h-full bg-white border-r border-[#e0e0e0] select-none shrink-0">
       {/* Account Info Switcher */}
       {!collapsed && (
-        <div className="flex items-center gap-2.5 px-5 py-3 border-b border-[#e0e0e0] bg-white hover:bg-[#00000005] cursor-pointer transition-colors duration-150 shrink-0">
+        <div className="flex items-center gap-2.5 px-5 py-3 bg-white hover:bg-[#00000005] cursor-pointer transition-colors duration-150 shrink-0">
           {/* Logo Diamond/Shield */}
           <div className="w-8 h-8 rounded flex items-center justify-center bg-white shrink-0 overflow-hidden">
             <img src="/images/download-removebg-preview.png" alt="Redington logo" className="w-full h-full object-contain" />
@@ -92,7 +92,7 @@ export default function SidebarContent({ onNavigate, collapsed = false }: Sideba
 
       {/* Collapsed Account Icon */}
       {collapsed && (
-        <div className="flex justify-center py-4 border-b border-[#e0e0e0] shrink-0">
+        <div className="flex justify-center py-4 shrink-0">
           <div className="w-8 h-8 rounded flex items-center justify-center bg-white overflow-hidden">
             <img src="/images/download-removebg-preview.png" alt="Redington logo" className="w-full h-full object-contain" />
           </div>

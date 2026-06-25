@@ -111,6 +111,10 @@ export default function CampaignTable() {
   };
 
   const selectedArr = Array.from(selectedCampaignIds);
+  const selectedCampaignsList = sorted.filter(c => selectedCampaignIds.has(c.id));
+  const totalSpent = selectedCampaignsList.reduce((sum, c) => sum + c.spent, 0);
+  const totalImpressions = selectedCampaignsList.reduce((sum, c) => sum + c.impressions, 0);
+  const totalClicks = selectedCampaignsList.reduce((sum, c) => sum + c.clicks, 0);
 
   const handleDelete = () => {
     deleteCampaigns(selectedArr);
@@ -178,24 +182,24 @@ export default function CampaignTable() {
       {/* Bulk action bar */}
       {someSelected && (
         <div className="flex items-center gap-2 px-4 py-2 bg-[#f4f7fa] border-b border-[#d8e2ee] shrink-0">
-          <span className="text-sm font-semibold text-[#004182]">
+          <span className="inline-flex items-center justify-center text-[11px] font-medium bg-[#2d6e4f] text-white px-4 py-[3px] rounded-full border border-[#1b4332] select-none">
             {selectedArr.length} selected
           </span>
           <div className="h-4 w-px bg-[#d8e2ee] mx-1" />
           <button 
-            className="text-xs font-bold text-[#0A66C2] hover:underline px-2 py-1"
+            className="text-xs font-medium text-[#0A66C2] hover:underline px-2 py-1"
             onClick={handleBulkPause}
           >
             Pause
           </button>
           <button 
-            className="text-xs font-bold text-[#0A66C2] hover:underline px-2 py-1"
+            className="text-xs font-medium text-[#0A66C2] hover:underline px-2 py-1"
             onClick={handleBulkResume}
           >
             Resume
           </button>
           <button 
-            className="text-xs font-bold text-[#0A66C2] hover:underline px-2 py-1"
+            className="text-xs font-medium text-[#0A66C2] hover:underline px-2 py-1"
             onClick={handleExport}
           >
             Export
@@ -203,7 +207,7 @@ export default function CampaignTable() {
           <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
             <AlertDialogTrigger asChild>
               <button
-                className="text-xs font-bold text-red-600 hover:underline px-2 py-1"
+                className="text-xs font-medium text-red-600 hover:underline px-2 py-1"
               >
                 Delete
               </button>
@@ -229,7 +233,7 @@ export default function CampaignTable() {
           </AlertDialog>
           <div className="flex-1" />
           <button
-            className="text-xs font-bold text-[#0A66C2] hover:underline px-2 py-1"
+            className="text-xs font-medium text-[#0A66C2] hover:underline px-2 py-1"
             onClick={clearCampaignSelection}
           >
             Clear selection
@@ -247,7 +251,7 @@ export default function CampaignTable() {
 
               {/* Campaign name */}
               <th
-                className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-left cursor-pointer hover:text-black select-none"
+                className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left cursor-pointer hover:text-black select-none"
                 onClick={() => handleSort('name')}
               >
                 <span className="inline-flex items-center gap-1">
@@ -256,13 +260,13 @@ export default function CampaignTable() {
               </th>
 
               {/* Toggle */}
-              <th className="w-20 px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-center">
+              <th className="w-20 px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-center">
                 Off/On
               </th>
 
               {/* Status */}
               <th
-                className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-left cursor-pointer hover:text-black select-none"
+                className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left cursor-pointer hover:text-black select-none"
                 onClick={() => handleSort('status')}
               >
                 <span className="inline-flex items-center gap-1">
@@ -272,7 +276,7 @@ export default function CampaignTable() {
 
               {/* Spent */}
               <th
-                className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none"
+                className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none"
                 onClick={() => handleSort('spent')}
               >
                 <span className="inline-flex items-center justify-end gap-1">
@@ -282,7 +286,7 @@ export default function CampaignTable() {
 
               {/* Impressions */}
               <th
-                className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none"
+                className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none"
                 onClick={() => handleSort('impressions')}
               >
                 <span className="inline-flex items-center justify-end gap-1">
@@ -292,7 +296,7 @@ export default function CampaignTable() {
 
               {/* Clicks */}
               <th
-                className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none"
+                className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none"
                 onClick={() => handleSort('clicks')}
               >
                 <span className="inline-flex items-center justify-end gap-1">
@@ -318,7 +322,7 @@ export default function CampaignTable() {
                   />
                 </td>
                 <td className="px-4 py-3.5">
-                  <span className="text-[13px] font-bold text-[#000000e0]">
+                  <span className="text-[13px] font-medium text-[#000000e0]">
                     {selectedArr.length} selected campaign{selectedArr.length > 1 ? 's' : ''}
                   </span>
                 </td>
@@ -328,13 +332,13 @@ export default function CampaignTable() {
                 <td className="px-4 py-3.5 text-xs text-[#00000060] font-medium">
                   -
                 </td>
-                <td className="px-4 py-3.5 text-right text-[13px] font-bold text-[#000000e0] tabular-nums">
+                <td className="px-4 py-3.5 text-right text-[13px] font-medium text-[#000000e0] tabular-nums">
                   {formatCurrency(totalSpent)}
                 </td>
-                <td className="px-4 py-3.5 text-right text-[13px] font-bold text-[#000000e0] tabular-nums">
+                <td className="px-4 py-3.5 text-right text-[13px] font-medium text-[#000000e0] tabular-nums">
                   {formatNumber(totalImpressions)}
                 </td>
-                <td className="px-4 py-3.5 text-right text-[13px] font-bold text-[#000000e0] tabular-nums">
+                <td className="px-4 py-3.5 text-right text-[13px] font-medium text-[#000000e0] tabular-nums">
                   {formatNumber(totalClicks)}
                 </td>
                 <td className="px-4 py-3.5" />
@@ -368,7 +372,7 @@ export default function CampaignTable() {
                       className="text-left group focus:outline-none"
                       onClick={() => navigate(`/campaign/${campaign.id}`)}
                     >
-                      <span className="text-[13px] font-bold text-[#0a66c2] group-hover:underline block truncate max-w-[280px]">
+                      <span className="text-[13px] font-medium text-[#0a66c2] group-hover:underline block truncate max-w-[280px]">
                         {campaign.name}
                       </span>
                       <span className="text-[11px] text-[#00000099] block mt-0.5">

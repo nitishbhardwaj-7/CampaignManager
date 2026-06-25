@@ -61,6 +61,7 @@ export default function CampaignsDashboard() {
     updateFilters,
     campaigns,
     adSets,
+    ads,
     selectedCampaignIds,
     deleteCampaigns,
     clearCampaignSelection,
@@ -77,7 +78,6 @@ export default function CampaignsDashboard() {
 
   const handleTabChange = (tab: TabId) => {
     setActiveTab(tab);
-    clearCampaignSelection();
     if (tab === 'adsets') navigate('/adsets');
     else if (tab === 'ads') navigate('/ads');
   };
@@ -109,7 +109,7 @@ export default function CampaignsDashboard() {
     <AppLayout>
       <div className="flex flex-col h-full bg-white">
         {/* Page header (Tabs) */}
-        <div className="px-4 pt-3 pb-0 bg-white border-b border-[#e0e0e0] shrink-0">
+        <div className="px-4 pt-1 pb-0 bg-white border-b border-[#e0e0e0] shrink-0">
           {/* Tabs */}
           <div className="flex items-center gap-0 border-b-0 -mb-px">
             {[
@@ -129,7 +129,7 @@ export default function CampaignsDashboard() {
                 labelText = 'Campaigns';
                 if (isSelected) {
                   badge = (
-                    <span className="text-xs bg-[#057642] text-white px-2.5 py-0.5 rounded-full font-semibold ml-2">
+                    <span className="inline-flex items-center justify-center text-[11px] font-medium bg-[#2d6e4f] text-white px-4 py-[3px] rounded-full border border-[#1b4332] ml-2 select-none">
                       {selectedArr.length} selected
                     </span>
                   );
@@ -144,18 +144,34 @@ export default function CampaignsDashboard() {
                 labelText = isSelected
                   ? `Ad sets for ${selectedArr.length} campaign${selectedArr.length > 1 ? 's' : ''}`
                   : 'Ad sets';
-                if (isSelected) {
-                  const filteredAdSetsCount = adSets.filter(a => selectedCampaignIds.has(a.campaignId)).length;
-                  badge = (
-                    <span className="text-xs text-[#00000099] font-normal ml-2">
-                      {filteredAdSetsCount} total
-                    </span>
-                  );
-                }
+                const filteredAdSetsCount = isSelected
+                  ? adSets.filter(a => selectedCampaignIds.has(a.campaignId)).length
+                  : adSets.length;
+                badge = isSelected ? (
+                  <span className="text-xs text-[#00000099] font-normal ml-2">
+                    {filteredAdSetsCount} total
+                  </span>
+                ) : (
+                  <span className="text-xs bg-[#0000000f] text-[#00000099] px-2.5 py-0.5 rounded-full font-normal ml-2">
+                    {filteredAdSetsCount}
+                  </span>
+                );
               } else if (tab.id === 'ads') {
                 labelText = isSelected
                   ? `Ads for ${selectedArr.length} campaign${selectedArr.length > 1 ? 's' : ''}`
                   : 'Ads';
+                const filteredAdsCount = isSelected
+                  ? ads.filter(a => selectedCampaignIds.has(a.campaignId)).length
+                  : ads.length;
+                badge = isSelected ? (
+                  <span className="text-xs text-[#00000099] font-normal ml-2">
+                    {filteredAdsCount} total
+                  </span>
+                ) : (
+                  <span className="text-xs bg-[#0000000f] text-[#00000099] px-2.5 py-0.5 rounded-full font-normal ml-2">
+                    {filteredAdsCount}
+                  </span>
+                );
               }
 
               // Custom Star-in-folder icon SVG for Adsets & Ads
@@ -165,10 +181,10 @@ export default function CampaignsDashboard() {
                     key={tab.id}
                     onClick={() => handleTabChange(tab.id)}
                     className={`
-                      relative flex items-center gap-2 px-4 py-3 text-[14px]
+                      relative flex items-center gap-2 px-8 py-3 text-[15px]
                       transition-colors duration-150 border-b-[3px] -mb-px
                       ${isActive
-                        ? 'border-black text-[#000000e0] font-bold'
+                        ? 'border-black text-[#000000e0] font-semibold'
                         : 'border-transparent text-[#00000099] hover:text-[#000000e0] font-medium'}
                     `}
                   >
@@ -186,10 +202,10 @@ export default function CampaignsDashboard() {
                   key={tab.id}
                   onClick={() => handleTabChange(tab.id)}
                   className={`
-                    relative flex items-center gap-2 px-4 py-3 text-[14px]
+                    relative flex items-center gap-2 px-8 py-3 text-[15px]
                     transition-colors duration-150 border-b-[3px] -mb-px
                     ${isActive
-                      ? 'border-black text-[#000000e0] font-bold'
+                      ? 'border-black text-[#000000e0] font-semibold'
                       : 'border-transparent text-[#00000099] hover:text-[#000000e0] font-medium'}
                   `}
                 >
@@ -203,11 +219,11 @@ export default function CampaignsDashboard() {
         </div>
 
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center gap-2.5 px-4 py-2.5 bg-white border-b border-[#e0e0e0] shrink-0">
+        <div className="flex flex-wrap items-center gap-2 px-4 py-2 bg-white border-b border-[#e0e0e0] shrink-0">
           {/* Create */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="h-8 text-xs font-bold bg-[#0A66C2] hover:bg-[#004b8d] text-white px-4 rounded flex items-center gap-1.5 transition-colors">
+              <button className="h-8 text-[13px] font-medium bg-[#0A66C2] hover:bg-[#004b8d] text-white px-4 rounded-full flex items-center gap-1 transition-colors">
                 Create
                 <ChevronDown className="h-3.5 w-3.5" />
               </button>
@@ -225,11 +241,38 @@ export default function CampaignsDashboard() {
             </DropdownMenuContent>
           </DropdownMenu>
 
+          {/* Set Status */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className="h-8 text-[13px] font-medium bg-[#00000008] text-[#00000099] hover:bg-[#0000000f] px-4 rounded-full flex items-center gap-1 transition-colors disabled:opacity-50 disabled:pointer-events-none"
+                disabled={selectedArr.length === 0}
+              >
+                Set status
+                <ChevronDown className="h-3.5 w-3.5 text-[#00000099]" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuItem onClick={() => {
+                toast.success(`${selectedArr.length} campaign(s) activated`);
+                clearCampaignSelection();
+              }}>
+                Active
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {
+                toast.success(`${selectedArr.length} campaign(s) paused`);
+                clearCampaignSelection();
+              }}>
+                Paused
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           {/* Bulk actions */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
-                className="h-8 text-xs font-bold bg-white border border-[#0A66C2] text-[#0A66C2] hover:bg-[#0A66C2]/05 px-4 rounded flex items-center gap-1.5 transition-colors disabled:opacity-50 disabled:pointer-events-none"
+                className="h-8 text-[13px] font-medium bg-white border border-[#0A66C2] text-[#0A66C2] hover:bg-[#0A66C2]/05 px-4 rounded-full flex items-center gap-1 transition-colors disabled:opacity-50 disabled:pointer-events-none"
                 disabled={selectedArr.length === 0}
               >
                 Bulk actions
@@ -263,11 +306,11 @@ export default function CampaignsDashboard() {
           <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
             <AlertDialogTrigger asChild>
               <button
-                className="h-8 w-8 bg-white border border-[#0A66C2] text-[#0A66C2] hover:bg-[#0A66C2]/05 rounded flex items-center justify-center transition-colors disabled:opacity-50 disabled:pointer-events-none"
+                className="h-8 w-8 bg-[#00000008] text-[#00000099] hover:bg-[#0000000f] rounded-full flex items-center justify-center transition-colors disabled:opacity-50 disabled:pointer-events-none"
                 disabled={selectedArr.length === 0}
                 aria-label="Delete selected campaigns"
               >
-                <Trash2 className="h-4 w-4 text-[#0A66C2]" />
+                <Trash2 className="h-4 w-4 text-[#00000099]" />
               </button>
             </AlertDialogTrigger>
             <AlertDialogContent className="max-w-[calc(100%-2rem)] md:max-w-lg">
@@ -290,9 +333,11 @@ export default function CampaignsDashboard() {
             </AlertDialogContent>
           </AlertDialog>
 
+          <div className="flex-1" />
+
           {/* Performance chart */}
           <button
-            className="h-8 text-xs font-semibold px-4 py-1.5 rounded-full border border-[#0A66C2] text-[#0A66C2] hover:bg-[#0A66C2]/05 transition-colors"
+            className="h-8 text-[13px] font-medium px-4 rounded-full border border-[#0A66C2] text-[#0A66C2] hover:bg-[#0A66C2]/05 transition-colors"
             onClick={() => toast.info('Performance chart coming soon')}
           >
             Performance chart
@@ -300,17 +345,15 @@ export default function CampaignsDashboard() {
 
           {/* Demographics */}
           <button
-            className="h-8 text-xs font-semibold px-4 py-1.5 rounded-full border border-[#0A66C2] text-[#0A66C2] hover:bg-[#0A66C2]/05 transition-colors"
+            className="h-8 text-[13px] font-medium px-4 rounded-full border border-[#0A66C2] text-[#0A66C2] hover:bg-[#0A66C2]/05 transition-colors"
             onClick={() => toast.info('Professional demographics coming soon')}
           >
             Professional demographics
           </button>
 
-          <div className="flex-1" />
-
           {/* Export */}
           <button
-            className="h-8 text-xs font-semibold px-4 py-1.5 rounded-full border border-[#0A66C2] text-[#0A66C2] hover:bg-[#0A66C2]/05 transition-colors"
+            className="h-8 text-[13px] font-medium px-4 rounded-full border border-[#0A66C2] text-[#0A66C2] hover:bg-[#0A66C2]/05 transition-colors"
             onClick={handleExport}
           >
             Export
@@ -318,125 +361,141 @@ export default function CampaignsDashboard() {
         </div>
 
         {/* Filter bar */}
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 bg-[#f8f9fa] border-b border-[#e0e0e0] shrink-0">
+        <div className="flex items-start gap-4 px-4 py-2.5 bg-white border-b border-[#e0e0e0] shrink-0">
           {/* Search */}
           <input
-            placeholder="Search by name or ID"
+            placeholder="Search by name, ID, or type"
             value={filters.search}
             onChange={e => updateFilters({ search: e.target.value })}
-            className="h-8 text-[13px] border border-[#b2b2b2] hover:border-black focus:border-[#0A66C2] px-3 py-1.5 rounded w-[180px] focus:outline-none transition-colors"
+            className="h-8 text-[13px] border border-[#0000004d] hover:border-black focus:border-[#0A66C2] px-3 rounded-[4px] w-[210px] focus:outline-none bg-white transition-colors shrink-0"
             aria-label="Search campaigns"
           />
 
-          {/* Filters dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-1.5 text-[13px] text-[#000000e0] hover:underline focus:outline-none select-none">
-                <span>Filters{filterCount > 0 ? <span className="font-bold">({filterCount})</span> : ''}</span>
-                <ChevronDown className="h-3.5 w-3.5 text-[#00000099]" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-48">
-              <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                Status
+          {/* Filter options layout */}
+          <div className="flex flex-col gap-2 pt-1 flex-1">
+            {/* Top row filters */}
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+              {/* Filters dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center text-[13px] text-[#000000e0] hover:underline focus:outline-none select-none">
+                    <span>Filters{filterCount > 0 ? <span className="font-medium">({filterCount})</span> : ''}</span>
+                    <svg className="h-3.5 w-3.5 text-[#00000099] shrink-0 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M7 10l5 5 5-5z" />
+                    </svg>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-48">
+                  <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                    Status
+                  </div>
+                  {STATUS_OPTIONS.map(opt => (
+                    <DropdownMenuItem
+                      key={opt.value}
+                      onClick={() => updateFilters({ status: opt.value })}
+                      className="flex items-center justify-between"
+                    >
+                      {opt.label}
+                      {filters.status === opt.value && (
+                        <span className="text-primary text-xs">✓</span>
+                      )}
+                    </DropdownMenuItem>
+                  ))}
+                  {hasFilters && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => updateFilters({ status: 'All', search: '' })}
+                        className="text-primary"
+                      >
+                        Clear all filters
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Columns */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center text-[13px] text-[#000000e0] hover:underline focus:outline-none select-none">
+                    <span>Columns: <span className="font-medium">Performance</span></span>
+                    <svg className="h-3.5 w-3.5 text-[#00000099] shrink-0 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M7 10l5 5 5-5z" />
+                    </svg>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem>Performance</DropdownMenuItem>
+                  <DropdownMenuItem>Breakdown</DropdownMenuItem>
+                  <DropdownMenuItem>Delivery</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Breakdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center text-[13px] text-[#000000e0] hover:underline focus:outline-none select-none">
+                    <span>Breakdown</span>
+                    <svg className="h-3.5 w-3.5 text-[#00000099] shrink-0 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M7 10l5 5 5-5z" />
+                    </svg>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start">
+                  <DropdownMenuItem>None</DropdownMenuItem>
+                  <DropdownMenuItem>Time</DropdownMenuItem>
+                  <DropdownMenuItem>Demographics</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              {/* Date range */}
+              <DateRangePicker
+                value={filters.dateRange}
+                onChange={range => updateFilters({ dateRange: range })}
+                label="Time range"
+                plain
+              />
+
+              {/* Compare */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="flex items-center text-[13px] text-[#000000e0] hover:underline focus:outline-none select-none">
+                    <span>Compare: <span className="font-medium">{filters.compareMode}</span></span>
+                    <svg className="h-3.5 w-3.5 text-[#00000099] shrink-0 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M7 10l5 5 5-5z" />
+                    </svg>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {COMPARE_OPTIONS.map(opt => (
+                    <DropdownMenuItem
+                      key={opt}
+                      onClick={() => updateFilters({ compareMode: opt })}
+                      className="flex items-center justify-between"
+                    >
+                      {opt}
+                      {filters.compareMode === opt && (
+                        <span className="text-primary text-xs ml-4">✓</span>
+                      )}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            {/* Bottom row filters */}
+            {filters.compareMode !== 'None' && (
+              <div className="flex items-center">
+                <DateRangePicker
+                  value={filters.compareRange}
+                  onChange={range => updateFilters({ compareRange: range })}
+                  label="Period range"
+                  plain
+                />
               </div>
-              {STATUS_OPTIONS.map(opt => (
-                <DropdownMenuItem
-                  key={opt.value}
-                  onClick={() => updateFilters({ status: opt.value })}
-                  className="flex items-center justify-between"
-                >
-                  {opt.label}
-                  {filters.status === opt.value && (
-                    <span className="text-primary text-xs">✓</span>
-                  )}
-                </DropdownMenuItem>
-              ))}
-              {hasFilters && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={() => updateFilters({ status: 'All', search: '' })}
-                    className="text-primary"
-                  >
-                    Clear all filters
-                  </DropdownMenuItem>
-                </>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* Columns */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-1.5 text-[13px] text-[#000000e0] hover:underline focus:outline-none select-none">
-                <span>Columns: <span className="font-bold">Performance</span></span>
-                <ChevronDown className="h-3.5 w-3.5 text-[#00000099]" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-              <DropdownMenuItem>Performance</DropdownMenuItem>
-              <DropdownMenuItem>Breakdown</DropdownMenuItem>
-              <DropdownMenuItem>Delivery</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* Breakdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-1.5 text-[13px] text-[#000000e0] hover:underline focus:outline-none select-none">
-                <span>Breakdown</span>
-                <ChevronDown className="h-3.5 w-3.5 text-[#00000099]" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-              <DropdownMenuItem>None</DropdownMenuItem>
-              <DropdownMenuItem>Time</DropdownMenuItem>
-              <DropdownMenuItem>Demographics</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* Date range */}
-          <DateRangePicker
-            value={filters.dateRange}
-            onChange={range => updateFilters({ dateRange: range })}
-            label="Time range"
-            plain
-          />
-
-          {/* Compare */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-1.5 text-[13px] text-[#000000e0] hover:underline focus:outline-none select-none">
-                <span>Compare: <span className="font-bold">{filters.compareMode}</span></span>
-                <ChevronDown className="h-3.5 w-3.5 text-[#00000099]" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {COMPARE_OPTIONS.map(opt => (
-                <DropdownMenuItem
-                  key={opt}
-                  onClick={() => updateFilters({ compareMode: opt })}
-                  className="flex items-center justify-between"
-                >
-                  {opt}
-                  {filters.compareMode === opt && (
-                    <span className="text-primary text-xs ml-4">✓</span>
-                  )}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* Period range (comparison) */}
-          {filters.compareMode !== 'None' && (
-            <DateRangePicker
-              value={filters.compareRange}
-              onChange={range => updateFilters({ compareRange: range })}
-              label="Period range"
-              plain
-            />
-          )}
+            )}
+          </div>
         </div>
 
         {/* Campaign table */}

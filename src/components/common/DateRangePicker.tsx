@@ -135,15 +135,17 @@ export default function DateRangePicker({ value, onChange, label, className, pla
         {plain ? (
           <button
             className={cn(
-              'flex items-center gap-1 text-[13px] text-[#000000e0] hover:underline focus:outline-none select-none',
+              'flex items-center text-[13px] text-[#000000e0] hover:underline focus:outline-none select-none',
               className
             )}
           >
-            {label && <span className="text-[#00000099]">{label}:</span>}
-            <span className="font-semibold text-[#000000e0] ml-0.5">
+            {label && <span className="text-[#000000e0] mr-1">{label}:</span>}
+            <span className="font-medium text-[#000000e0]">
               {formatDisplay(value.from)} - {formatDisplay(value.to)}
             </span>
-            <ChevronDown className="h-3.5 w-3.5 text-[#00000099] shrink-0 ml-0.5" />
+            <svg className="h-3.5 w-3.5 text-[#00000099] shrink-0 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M7 10l5 5 5-5z" />
+            </svg>
           </button>
         ) : (
           <Button
