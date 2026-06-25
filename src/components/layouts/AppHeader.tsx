@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Bell,
   HelpCircle,
-  ChevronDown,
   Menu,
 } from 'lucide-react';
 import {
@@ -19,26 +18,19 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import SidebarContent from './SidebarContent';
 import { toast } from 'sonner';
 
-const accounts = [
-  { id: '1', name: 'Redington MENA', status: 'active' },
-  { id: '2', name: 'Redington Gulf', status: 'active' },
-  { id: '3', name: 'Redington India', status: 'paused' },
-];
-
 export default function AppHeader() {
   const { toggleSidebar } = useCampaigns();
-  const [selectedAccount, setSelectedAccount] = useState(accounts[0]);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = React.useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-card border-b border-border flex items-center h-14 px-4 gap-3 shrink-0">
+    <header className="sticky top-0 z-50 w-full bg-card border-b border-border flex items-center h-12 px-4 gap-2 shrink-0">
       {/* Mobile hamburger */}
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <SheetTrigger asChild>
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden shrink-0 text-foreground"
+            className="lg:hidden shrink-0 text-foreground w-8 h-8"
             aria-label="Open navigation menu"
           >
             <Menu className="h-5 w-5" />
@@ -49,99 +41,54 @@ export default function AppHeader() {
         </SheetContent>
       </Sheet>
 
-      {/* Desktop sidebar toggle */}
+      {/* Desktop hamburger */}
       <Button
         variant="ghost"
         size="icon"
         onClick={toggleSidebar}
-        className="hidden lg:flex shrink-0 text-muted-foreground hover:text-foreground"
+        className="hidden lg:flex shrink-0 text-muted-foreground hover:text-foreground w-8 h-8"
         aria-label="Toggle sidebar"
       >
         <Menu className="h-5 w-5" />
       </Button>
 
-      {/* LinkedIn Logo */}
-      <div className="flex items-center gap-2 shrink-0">
-        <span className="text-sm font-semibold text-foreground">
-          Campaign Manager
+      {/* LinkedIn Branding */}
+      <div className="flex items-center gap-2 shrink-0 ml-1">
+        {/* LinkedIn "in" SVG Logo */}
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-[21px] w-[21px] fill-[#0A66C2] shrink-0">
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </svg>
+        <span className="flex items-center gap-1.5 text-[15px]">
+          <span className="font-semibold text-[#0A66C2]">Ads</span>
+          <span className="text-muted-foreground font-light text-sm">|</span>
+          <span className="text-[#0A66C2] font-normal tracking-tight">Campaign Manager</span>
         </span>
       </div>
-
-      <div className="w-px h-6 bg-border mx-1 hidden md:block shrink-0" />
-
-      {/* Account Selector */}
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="flex items-center gap-2 px-2 py-1.5 h-auto text-sm font-medium hover:bg-secondary"
-          >
-            <span
-              className="w-2 h-2 rounded-full bg-[hsl(var(--status-active))] shrink-0"
-              aria-hidden
-            />
-            <span className="hidden sm:block max-w-[160px] truncate">
-              {selectedAccount.name}
-            </span>
-            <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="w-56">
-          <div className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-            Advertising accounts
-          </div>
-          <DropdownMenuSeparator />
-          {accounts.map(acc => (
-            <DropdownMenuItem
-              key={acc.id}
-              onClick={() => setSelectedAccount(acc)}
-              className="flex items-center gap-2"
-            >
-              <span
-                className={`w-2 h-2 rounded-full shrink-0 ${
-                  acc.status === 'active'
-                    ? 'bg-[hsl(var(--status-active))]'
-                    : 'bg-[hsl(var(--status-paused))]'
-                }`}
-              />
-              <span className="flex-1 truncate">{acc.name}</span>
-              {selectedAccount.id === acc.id && (
-                <span className="text-primary text-xs">✓</span>
-              )}
-            </DropdownMenuItem>
-          ))}
-          <DropdownMenuSeparator />
-          <DropdownMenuItem className="text-primary font-medium">
-            + Add account
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
 
       <div className="flex-1" />
 
       {/* Right icons */}
-      <div className="flex items-center gap-1 shrink-0">
+      <div className="flex items-center gap-3 shrink-0 mr-1">
         {/* Notifications */}
         <Button
           variant="ghost"
           size="icon"
-          className="relative text-muted-foreground hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground w-8 h-8"
           aria-label="Notifications"
           onClick={() => toast.info('No new notifications')}
         >
-          <Bell className="h-5 w-5" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive rounded-full" />
+          <Bell className="h-5 w-5 text-[#000000e0]" />
         </Button>
 
         {/* Help */}
         <Button
           variant="ghost"
           size="icon"
-          className="text-muted-foreground hover:text-foreground"
+          className="text-muted-foreground hover:text-foreground w-8 h-8"
           aria-label="Help"
           onClick={() => toast.info('Help center coming soon')}
         >
-          <HelpCircle className="h-5 w-5" />
+          <HelpCircle className="h-5 w-5 text-[#000000e0]" />
         </Button>
 
         {/* User avatar */}
@@ -150,12 +97,14 @@ export default function AppHeader() {
             <Button
               variant="ghost"
               size="icon"
-              className="rounded-full overflow-hidden p-0 w-8 h-8"
+              className="rounded-full overflow-hidden p-0 w-8 h-8 border border-border"
               aria-label="User profile"
             >
-              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold">
-                RM
-              </div>
+              <img
+                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=80&h=80&q=80"
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">

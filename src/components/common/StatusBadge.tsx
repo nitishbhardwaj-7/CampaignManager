@@ -10,28 +10,28 @@ interface StatusBadgeProps {
 const statusConfig: Record<CampaignStatus, { label: string; className: string; dot: string }> = {
   Active: {
     label: 'Active',
-    className: 'bg-[hsl(136,74%,90%)] text-[hsl(136,74%,25%)]',
-    dot: 'bg-[hsl(var(--status-active))]',
+    className: 'bg-[#057642]/10 text-[#057642]',
+    dot: 'bg-[#057642]',
   },
   Paused: {
     label: 'Paused',
-    className: 'bg-[hsl(220,9%,92%)] text-[hsl(220,9%,40%)]',
-    dot: 'bg-[hsl(var(--status-paused))]',
+    className: 'bg-[#0000000a] text-[#00000099]',
+    dot: 'bg-[#00000060]',
   },
   Draft: {
     label: 'Draft',
-    className: 'bg-[hsl(38,92%,92%)] text-[hsl(38,70%,35%)]',
-    dot: 'bg-[hsl(38,92%,50%)]',
+    className: 'bg-[#f59e0b]/10 text-[#d97706]',
+    dot: 'bg-[#d97706]',
   },
   Completed: {
     label: 'Completed',
-    className: 'bg-[hsl(211,91%,92%)] text-[hsl(211,91%,35%)]',
-    dot: 'bg-primary',
+    className: 'bg-[#0a66c2]/10 text-[#0a66c2]',
+    dot: 'bg-[#0a66c2]',
   },
   Archived: {
     label: 'Archived',
-    className: 'bg-muted text-muted-foreground',
-    dot: 'bg-muted-foreground',
+    className: 'bg-[#0000000a] text-[#00000099]',
+    dot: 'bg-[#00000060]',
   },
 };
 

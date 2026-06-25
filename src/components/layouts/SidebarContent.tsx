@@ -1,67 +1,28 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  LayoutDashboard,
-  Target,
-  Megaphone,
-  BarChart2,
-  Lightbulb,
-  Image,
-  CreditCard,
-  Settings,
-  ExternalLink,
-  ChevronRight,
   ChevronDown,
+  ExternalLink,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface NavItem {
   label: string;
-  icon: React.ElementType;
   path?: string;
   external?: boolean;
-  children?: NavItem[];
+  hasChildren?: boolean;
 }
 
 const navItems: NavItem[] = [
-  { label: 'Overview', icon: LayoutDashboard, path: '/' },
-  {
-    label: 'Plan',
-    icon: Target,
-    children: [
-      { label: 'Audience insights', icon: Target },
-      { label: 'Audience templates', icon: Target },
-      { label: 'Conversion tracking', icon: Target },
-    ],
-  },
-  {
-    label: 'Advertise',
-    icon: Megaphone,
-    path: '/',
-    children: [
-      { label: 'Campaigns', icon: Megaphone, path: '/' },
-      { label: 'Ad sets', icon: Megaphone, path: '/adsets' },
-      { label: 'Ads', icon: Megaphone, path: '/ads' },
-    ],
-  },
-  {
-    label: 'Measure',
-    icon: BarChart2,
-    children: [
-      { label: 'Reporting', icon: BarChart2 },
-      { label: 'Conversion tracking', icon: BarChart2 },
-    ],
-  },
-  { label: 'Recommendations', icon: Lightbulb, path: '/recommendations' },
-  { label: 'Content & assets', icon: Image, path: '/assets' },
-  { label: 'Billing', icon: CreditCard, path: '/billing' },
-  { label: 'Account settings', icon: Settings, path: '/settings' },
-  {
-    label: 'Company page',
-    icon: ExternalLink,
-    external: true,
-    path: 'https://linkedin.com',
-  },
+  { label: 'Overview', path: '/overview' },
+  { label: 'Plan', hasChildren: true },
+  { label: 'Advertise', path: '/' },
+  { label: 'Measure', hasChildren: true },
+  { label: 'Recommendations', path: '/recommendations' },
+  { label: 'Content & assets', hasChildren: true, path: '/assets' },
+  { label: 'Billing', path: '/billing' },
+  { label: 'Account settings', hasChildren: true, path: '/settings' },
+  { label: 'Company page', external: true, path: 'https://linkedin.com' },
 ];
 
 interface SidebarContentProps {
@@ -72,23 +33,32 @@ interface SidebarContentProps {
 export default function SidebarContent({ onNavigate, collapsed = false }: SidebarContentProps) {
   const location = useLocation();
   const navigate = useNavigate();
-  const [expanded, setExpanded] = useState<string[]>(['Advertise']);
 
-  const toggleExpand = (label: string) => {
-    setExpanded(prev =>
-      prev.includes(label) ? prev.filter(l => l !== label) : [...prev, label]
+  const isAdvertiseActive = () => {
+    return (
+      ['/', '/adsets', '/ads', '/create'].includes(location.pathname) ||
+      location.pathname.startsWith('/campaign/')
     );
   };
 
-  const isActive = (path?: string) => path && location.pathname === path;
+  const isActive = (item: NavItem) => {
+    if (item.label === 'Advertise') {
+      return isAdvertiseActive();
+    }
+    if (item.label === 'Overview') {
+      return location.pathname === '/overview';
+    }
+    return item.path && location.pathname === item.path;
+  };
 
   const handleNav = (item: NavItem) => {
     if (item.external && item.path) {
       window.open(item.path, '_blank');
       return;
     }
-    if (item.children) {
-      toggleExpand(item.label);
+    if (item.label === 'Advertise') {
+      navigate('/');
+      onNavigate?.();
       return;
     }
     if (item.path) {
@@ -98,95 +68,76 @@ export default function SidebarContent({ onNavigate, collapsed = false }: Sideba
   };
 
   return (
-    <div className="flex flex-col h-full bg-sidebar border-r border-sidebar-border overflow-y-auto">
-      {/* Logo area on mobile */}
-      <div className="h-14 flex items-center px-4 border-b border-sidebar-border shrink-0 lg:hidden">
-        {!collapsed && (
-          <span className="text-sm font-semibold text-foreground">Campaign Manager</span>
-        )}
-      </div>
-
-      <nav className="flex-1 px-2 py-3 space-y-0.5" aria-label="Main navigation">
-        {navItems.map(item => {
-          const Icon = item.icon;
-          const active = isActive(item.path);
-          const isExpanded = expanded.includes(item.label);
-          const hasChildren = !!item.children;
-
-          return (
-            <div key={item.label}>
-              <button
-                onClick={() => handleNav(item)}
-                className={cn(
-                  'sidebar-nav-item w-full text-left',
-                  active && 'sidebar-nav-item-active',
-                  collapsed && 'justify-center px-2'
-                )}
-                aria-current={active ? 'page' : undefined}
-                title={collapsed ? item.label : undefined}
-              >
-                <Icon
-                  className={cn(
-                    'h-4 w-4 shrink-0',
-                    active ? 'text-primary' : 'text-muted-foreground'
-                  )}
-                />
-                {!collapsed && (
-                  <>
-                    <span className="flex-1 text-left">{item.label}</span>
-                    {item.external && (
-                      <ExternalLink className="h-3 w-3 text-muted-foreground shrink-0" />
-                    )}
-                    {hasChildren && !item.external && (
-                      isExpanded
-                        ? <ChevronDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                        : <ChevronRight className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                    )}
-                  </>
-                )}
-              </button>
-
-              {/* Sub-items */}
-              {hasChildren && isExpanded && !collapsed && (
-                <div className="ml-7 mt-0.5 space-y-0.5 border-l border-border pl-3">
-                  {item.children!.map(child => {
-                    const childActive = isActive(child.path);
-                    return (
-                      <button
-                        key={child.label}
-                        onClick={() => {
-                          if (child.path) {
-                            navigate(child.path);
-                            onNavigate?.();
-                          }
-                        }}
-                        className={cn(
-                          'w-full text-left text-sm py-1.5 px-2 rounded transition-colors duration-150',
-                          childActive
-                            ? 'text-primary font-medium'
-                            : 'text-muted-foreground hover:text-foreground hover:bg-sidebar-accent'
-                        )}
-                      >
-                        {child.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </nav>
-
-      {/* Bottom account info */}
+    <div className="flex flex-col h-full bg-white border-r border-[#e0e0e0] select-none shrink-0">
+      {/* Account Info Switcher */}
       {!collapsed && (
-        <div className="p-3 border-t border-sidebar-border shrink-0">
-          <div className="text-xs text-muted-foreground">
-            <p className="font-medium text-foreground">Redington MENA</p>
-            <p>Account #4892761</p>
+        <div className="flex items-center gap-2.5 px-5 py-3 border-b border-[#e0e0e0] bg-white hover:bg-[#00000005] cursor-pointer transition-colors duration-150 shrink-0">
+          {/* Logo Diamond/Shield */}
+          <div className="w-8 h-8 rounded flex items-center justify-center bg-white shrink-0 overflow-hidden">
+            <img src="/images/download-removebg-preview.png" alt="Redington logo" className="w-full h-full object-contain" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h2 className="text-[13.5px] font-bold text-[#000000e0] leading-snug truncate">
+              Redington MENA
+            </h2>
+            <div className="text-[10.5px] text-[#00000099] flex items-center gap-1 leading-none mt-0.5">
+              <span>513550058</span>
+              <span className="w-1 h-1 rounded-full bg-[#057642]" />
+              <span className="text-[#057642] font-semibold">Active</span>
+            </div>
+          </div>
+          <ChevronDown className="h-4 w-4 text-[#00000099] shrink-0" />
+        </div>
+      )}
+
+      {/* Collapsed Account Icon */}
+      {collapsed && (
+        <div className="flex justify-center py-4 border-b border-[#e0e0e0] shrink-0">
+          <div className="w-8 h-8 rounded flex items-center justify-center bg-white overflow-hidden">
+            <img src="/images/download-removebg-preview.png" alt="Redington logo" className="w-full h-full object-contain" />
           </div>
         </div>
       )}
+
+      {/* Navigation Links */}
+      <nav className="flex-1 py-2 space-y-0.5" aria-label="Main navigation">
+        {navItems.map(item => {
+          const active = isActive(item);
+
+          return (
+            <button
+              key={item.label}
+              onClick={() => handleNav(item)}
+              className={cn(
+                'w-full flex items-center justify-between text-left transition-all duration-150 py-2',
+                collapsed ? 'justify-center px-2' : 'px-5',
+                active
+                  ? 'text-[#000000e0] font-bold border-l-[3px] border-[#0A66C2] bg-transparent'
+                  : 'text-[#00000099] font-normal hover:text-[#000000e0] hover:bg-[#00000005]'
+              )}
+              style={{
+                paddingLeft: active && !collapsed ? '17px' : undefined, // offset left border
+              }}
+              title={collapsed ? item.label : undefined}
+            >
+              {!collapsed && (
+                <>
+                  <span className="text-[13.5px] tracking-tight">{item.label}</span>
+                  {item.external && (
+                    <ExternalLink className="h-3 w-3 text-[#00000099] shrink-0" />
+                  )}
+                  {item.hasChildren && !item.external && (
+                    <ChevronDown className="h-4 w-4 text-[#00000099] shrink-0" />
+                  )}
+                </>
+              )}
+              {collapsed && (
+                <span className="w-2 h-2 rounded-full bg-muted-foreground/40" />
+              )}
+            </button>
+          );
+        })}
+      </nav>
     </div>
   );
 }

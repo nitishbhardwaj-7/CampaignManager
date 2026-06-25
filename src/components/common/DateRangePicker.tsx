@@ -14,6 +14,7 @@ interface DateRangePickerProps {
   onChange: (range: DateRange) => void;
   label?: string;
   className?: string;
+  plain?: boolean;
 }
 
 function formatDisplay(dateStr: string): string {
@@ -35,7 +36,7 @@ function getFirstDayOfWeek(year: number, month: number) {
   return new Date(year, month, 1).getDay();
 }
 
-export default function DateRangePicker({ value, onChange, label, className }: DateRangePickerProps) {
+export default function DateRangePicker({ value, onChange, label, className, plain = false }: DateRangePickerProps) {
   const [open, setOpen] = useState(false);
   const today = new Date();
   const [viewMonth, setViewMonth] = useState(today.getMonth());
@@ -131,20 +132,35 @@ export default function DateRangePicker({ value, onChange, label, className }: D
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          className={cn(
-            'h-8 text-xs font-normal gap-1.5 px-3 border-border',
-            className
-          )}
-        >
-          <CalendarDays className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-          {label && <span className="text-muted-foreground">{label}:</span>}
-          <span className="text-foreground">
-            {formatDisplay(value.from)} – {formatDisplay(value.to)}
-          </span>
-          <ChevronDown className="h-3 w-3 text-muted-foreground shrink-0 ml-0.5" />
-        </Button>
+        {plain ? (
+          <button
+            className={cn(
+              'flex items-center gap-1 text-[13px] text-[#000000e0] hover:underline focus:outline-none select-none',
+              className
+            )}
+          >
+            {label && <span className="text-[#00000099]">{label}:</span>}
+            <span className="font-semibold text-[#000000e0] ml-0.5">
+              {formatDisplay(value.from)} - {formatDisplay(value.to)}
+            </span>
+            <ChevronDown className="h-3.5 w-3.5 text-[#00000099] shrink-0 ml-0.5" />
+          </button>
+        ) : (
+          <Button
+            variant="outline"
+            className={cn(
+              'h-8 text-xs font-normal gap-1.5 px-3 border-border',
+              className
+            )}
+          >
+            <CalendarDays className="h-3.5 w-3.5 text-[#00000099] shrink-0" />
+            {label && <span className="text-muted-foreground">{label}:</span>}
+            <span className="text-foreground">
+              {formatDisplay(value.from)} – {formatDisplay(value.to)}
+            </span>
+            <ChevronDown className="h-3 w-3 text-[#00000099] shrink-0 ml-0.5" />
+          </Button>
+        )}
       </PopoverTrigger>
       <PopoverContent className="p-0 w-auto" align="start">
         <div className="p-3 min-w-[280px]">

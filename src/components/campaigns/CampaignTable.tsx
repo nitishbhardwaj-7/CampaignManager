@@ -174,33 +174,39 @@ export default function CampaignTable() {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col h-full bg-white">
       {/* Bulk action bar */}
       {someSelected && (
-        <div className="flex items-center gap-2 px-4 py-2 bg-[hsl(211,91%,97%)] border-b border-[hsl(211,91%,85%)]">
-          <span className="text-sm font-medium text-primary">
+        <div className="flex items-center gap-2 px-4 py-2 bg-[#f4f7fa] border-b border-[#d8e2ee] shrink-0">
+          <span className="text-sm font-semibold text-[#004182]">
             {selectedArr.length} selected
           </span>
-          <div className="h-4 w-px bg-border mx-1" />
-          <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={handleBulkPause}>
+          <div className="h-4 w-px bg-[#d8e2ee] mx-1" />
+          <button 
+            className="text-xs font-bold text-[#0A66C2] hover:underline px-2 py-1"
+            onClick={handleBulkPause}
+          >
             Pause
-          </Button>
-          <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={handleBulkResume}>
+          </button>
+          <button 
+            className="text-xs font-bold text-[#0A66C2] hover:underline px-2 py-1"
+            onClick={handleBulkResume}
+          >
             Resume
-          </Button>
-          <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={handleExport}>
+          </button>
+          <button 
+            className="text-xs font-bold text-[#0A66C2] hover:underline px-2 py-1"
+            onClick={handleExport}
+          >
             Export
-          </Button>
+          </button>
           <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
             <AlertDialogTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-7 text-xs text-destructive hover:text-destructive"
+              <button
+                className="text-xs font-bold text-red-600 hover:underline px-2 py-1"
               >
-                <Trash2 className="h-3.5 w-3.5 mr-1" />
                 Delete
-              </Button>
+              </button>
             </AlertDialogTrigger>
             <AlertDialogContent className="max-w-[calc(100%-2rem)] md:max-w-lg">
               <AlertDialogHeader>
@@ -222,35 +228,26 @@ export default function CampaignTable() {
             </AlertDialogContent>
           </AlertDialog>
           <div className="flex-1" />
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 text-xs"
+          <button
+            className="text-xs font-bold text-[#0A66C2] hover:underline px-2 py-1"
             onClick={clearCampaignSelection}
           >
             Clear selection
-          </Button>
+          </button>
         </div>
       )}
 
       {/* Table */}
-      <div className="w-full max-w-full overflow-x-auto bg-card">
+      <div className="w-full max-w-full overflow-x-auto bg-white">
         <table className="w-full min-w-[700px] border-collapse">
           <thead>
-            <tr className="border-b border-border">
-              {/* Checkbox */}
-              <th className="table-header-cell w-10 text-center">
-                <Checkbox
-                  checked={allSelected}
-                  onCheckedChange={handleSelectAll}
-                  aria-label="Select all campaigns"
-                  className="mx-auto"
-                />
-              </th>
+            <tr className="border-b border-[#e0e0e0]">
+              {/* Checkbox column header - empty */}
+              <th className="w-12 bg-white border-b border-[#e0e0e0]" />
 
               {/* Campaign name */}
               <th
-                className="table-header-cell text-left cursor-pointer hover:text-foreground select-none"
+                className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-left cursor-pointer hover:text-black select-none"
                 onClick={() => handleSort('name')}
               >
                 <span className="inline-flex items-center gap-1">
@@ -259,11 +256,13 @@ export default function CampaignTable() {
               </th>
 
               {/* Toggle */}
-              <th className="table-header-cell text-center w-16">On/Off</th>
+              <th className="w-20 px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-center">
+                Off/On
+              </th>
 
               {/* Status */}
               <th
-                className="table-header-cell text-left cursor-pointer hover:text-foreground select-none"
+                className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-left cursor-pointer hover:text-black select-none"
                 onClick={() => handleSort('status')}
               >
                 <span className="inline-flex items-center gap-1">
@@ -273,7 +272,7 @@ export default function CampaignTable() {
 
               {/* Spent */}
               <th
-                className="table-header-cell text-right cursor-pointer hover:text-foreground select-none"
+                className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none"
                 onClick={() => handleSort('spent')}
               >
                 <span className="inline-flex items-center justify-end gap-1">
@@ -283,7 +282,7 @@ export default function CampaignTable() {
 
               {/* Impressions */}
               <th
-                className="table-header-cell text-right cursor-pointer hover:text-foreground select-none"
+                className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none"
                 onClick={() => handleSort('impressions')}
               >
                 <span className="inline-flex items-center justify-end gap-1">
@@ -293,7 +292,7 @@ export default function CampaignTable() {
 
               {/* Clicks */}
               <th
-                className="table-header-cell text-right cursor-pointer hover:text-foreground select-none"
+                className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none"
                 onClick={() => handleSort('clicks')}
               >
                 <span className="inline-flex items-center justify-end gap-1">
@@ -302,23 +301,58 @@ export default function CampaignTable() {
               </th>
 
               {/* Actions */}
-              <th className="table-header-cell w-8" />
+              <th className="w-12 bg-white border-b border-[#e0e0e0]" />
             </tr>
           </thead>
 
           <tbody>
+            {/* Selected aggregate row */}
+            {selectedArr.length > 0 && (
+              <tr className="border-b border-[#e0e0e0] bg-[#f8f9fa]">
+                <td className="px-4 py-3.5 text-center">
+                  <Checkbox
+                    checked={false}
+                    onCheckedChange={() => clearCampaignSelection()}
+                    aria-label="Clear campaign selection"
+                    className="mx-auto"
+                  />
+                </td>
+                <td className="px-4 py-3.5">
+                  <span className="text-[13px] font-bold text-[#000000e0]">
+                    {selectedArr.length} selected campaign{selectedArr.length > 1 ? 's' : ''}
+                  </span>
+                </td>
+                <td className="px-4 py-3.5 text-center text-xs text-[#00000060] font-medium">
+                  -
+                </td>
+                <td className="px-4 py-3.5 text-xs text-[#00000060] font-medium">
+                  -
+                </td>
+                <td className="px-4 py-3.5 text-right text-[13px] font-bold text-[#000000e0] tabular-nums">
+                  {formatCurrency(totalSpent)}
+                </td>
+                <td className="px-4 py-3.5 text-right text-[13px] font-bold text-[#000000e0] tabular-nums">
+                  {formatNumber(totalImpressions)}
+                </td>
+                <td className="px-4 py-3.5 text-right text-[13px] font-bold text-[#000000e0] tabular-nums">
+                  {formatNumber(totalClicks)}
+                </td>
+                <td className="px-4 py-3.5" />
+              </tr>
+            )}
+
             {sorted.map(campaign => {
               const selected = selectedCampaignIds.has(campaign.id);
               return (
                 <tr
                   key={campaign.id}
                   className={cn(
-                    'border-b border-border transition-colors duration-150',
-                    selected ? 'bg-[hsl(211,91%,97%)]' : 'hover:bg-[hsl(216,17%,98%)]'
+                    'border-b border-[#e0e0e0] transition-colors duration-100',
+                    selected ? 'bg-[#eef3f8]' : 'bg-white hover:bg-[#00000005]'
                   )}
                 >
                   {/* Checkbox */}
-                  <td className="table-body-cell text-center w-10">
+                  <td className="px-4 py-3.5 text-center w-12">
                     <Checkbox
                       checked={selected}
                       onCheckedChange={() => toggleCampaignSelection(campaign.id)}
@@ -329,22 +363,22 @@ export default function CampaignTable() {
                   </td>
 
                   {/* Campaign name */}
-                  <td className="table-body-cell max-w-xs">
+                  <td className="px-4 py-3.5 max-w-xs">
                     <button
-                      className="text-left group"
+                      className="text-left group focus:outline-none"
                       onClick={() => navigate(`/campaign/${campaign.id}`)}
                     >
-                      <span className="text-sm font-semibold text-primary group-hover:underline block truncate max-w-[240px]">
+                      <span className="text-[13px] font-bold text-[#0a66c2] group-hover:underline block truncate max-w-[280px]">
                         {campaign.name}
                       </span>
-                      <span className="text-xs text-muted-foreground block">
+                      <span className="text-[11px] text-[#00000099] block mt-0.5">
                         {campaign.id} · {campaign.objective}
                       </span>
                     </button>
                   </td>
 
                   {/* Toggle */}
-                  <td className="table-body-cell text-center">
+                  <td className="px-4 py-3.5 text-center w-20">
                     <CampaignToggle
                       checked={campaign.isActive}
                       onChange={() => {
@@ -360,36 +394,34 @@ export default function CampaignTable() {
                   </td>
 
                   {/* Status */}
-                  <td className="table-body-cell">
+                  <td className="px-4 py-3.5">
                     <StatusBadge status={campaign.status} />
                   </td>
 
                   {/* Spent */}
-                  <td className="table-body-cell text-right font-medium tabular-nums">
+                  <td className="px-4 py-3.5 text-right font-medium text-[13px] text-[#000000e0] tabular-nums">
                     {campaign.spent > 0 ? formatCurrency(campaign.spent) : '—'}
                   </td>
 
                   {/* Impressions */}
-                  <td className="table-body-cell text-right tabular-nums text-muted-foreground">
+                  <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
                     {campaign.impressions > 0 ? formatNumber(campaign.impressions) : '—'}
                   </td>
 
                   {/* Clicks */}
-                  <td className="table-body-cell text-right tabular-nums text-muted-foreground">
+                  <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
                     {campaign.clicks > 0 ? formatNumber(campaign.clicks) : '—'}
                   </td>
 
                   {/* Row action */}
-                  <td className="table-body-cell">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                  <td className="px-4 py-3.5 text-center w-12">
+                    <button
+                      className="h-6 w-6 rounded hover:bg-black/5 flex items-center justify-center text-[#00000099] hover:text-black focus:outline-none"
                       onClick={() => navigate(`/campaign/${campaign.id}`)}
                       aria-label="View campaign details"
                     >
                       <ChevronRight className="h-4 w-4" />
-                    </Button>
+                    </button>
                   </td>
                 </tr>
               );
@@ -399,12 +431,12 @@ export default function CampaignTable() {
       </div>
 
       {/* Footer */}
-      <div className="flex items-center justify-between px-4 py-2 border-t border-border bg-[hsl(216,17%,98%)]">
-        <span className="text-xs text-muted-foreground">
+      <div className="flex items-center justify-between px-4 py-3 border-t border-[#e0e0e0] bg-[#f8f9fa] shrink-0 mt-auto">
+        <span className="text-xs text-[#00000099]">
           Showing {sorted.length} of {campaigns.length} campaigns
         </span>
         {someSelected && (
-          <span className="text-xs text-primary font-medium">
+          <span className="text-xs text-[#004182] font-semibold">
             {selectedArr.length} selected
           </span>
         )}

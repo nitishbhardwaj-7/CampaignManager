@@ -9,6 +9,7 @@ import {
   Download,
   ChevronRight,
   Image,
+  Folder,
 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
@@ -46,6 +47,8 @@ type SortDir = 'asc' | 'desc';
 export default function AdsPage() {
   const navigate = useNavigate();
   const {
+    campaigns,
+    adSets,
     ads,
     selectedAdIds,
     toggleAdSelection,
@@ -53,6 +56,7 @@ export default function AdsPage() {
     clearAdSelection,
     toggleAdActive,
     deleteAds,
+    selectedCampaignIds,
   } = useCampaigns();
 
   const [search, setSearch] = useState('');
@@ -123,32 +127,119 @@ export default function AdsPage() {
     toast.success('Ads exported');
   };
 
+  const selectedAdsList = sorted.filter(a => selectedAdIds.has(a.id));
+  const totalSpent = selectedAdsList.reduce((sum, a) => sum + a.spent, 0);
+  const totalImpressions = selectedAdsList.reduce((sum, a) => sum + a.impressions, 0);
+  const totalClicks = selectedAdsList.reduce((sum, a) => sum + a.clicks, 0);
+
+  const campaignSelectedArr = Array.from(selectedCampaignIds);
+  const hasCampaignSelection = campaignSelectedArr.length > 0;
+
   return (
     <AppLayout>
-      <div className="flex flex-col h-full">
-        {/* Page header */}
-        <div className="px-6 pt-5 pb-0 bg-card border-b border-border">
-          <h1 className="text-lg font-semibold text-foreground mb-4">Advertise</h1>
-
+      <div className="flex flex-col h-full bg-white">
+        {/* Page header (Tabs) */}
+        <div className="px-4 pt-3 pb-0 bg-white border-b border-[#e0e0e0] shrink-0">
           {/* Tabs */}
-          <div className="flex items-center gap-0 -mb-px">
+          <div className="flex items-center gap-0 border-b-0 -mb-px">
             {[
-              { label: 'Campaigns', path: '/' },
-              { label: 'Ad sets', path: '/adsets' },
-              { label: 'Ads', path: '/ads' },
+              { id: 'campaigns', label: 'Campaigns', path: '/' },
+              { id: 'adsets', label: 'Ad sets', path: '/adsets' },
+              { id: 'ads', label: 'Ads', path: '/ads' },
             ].map(tab => {
-              const active = location.pathname === tab.path;
+              const isActive = tab.id === 'ads';
+
+              // Determine dynamic label and badge
+              let labelText = tab.label;
+              let badge: React.ReactNode = null;
+
+              if (tab.id === 'campaigns') {
+                labelText = 'Campaigns';
+                if (hasCampaignSelection) {
+                  badge = (
+                    <span className="text-xs bg-[#057642] text-white px-2.5 py-0.5 rounded-full font-semibold ml-2">
+                      {campaignSelectedArr.length} selected
+                    </span>
+                  );
+                } else {
+                  badge = (
+                    <span className="text-xs bg-[#0000000f] text-[#00000099] px-2.5 py-0.5 rounded-full font-normal ml-2">
+                      {campaigns.length}
+                    </span>
+                  );
+                }
+              } else if (tab.id === 'adsets') {
+                labelText = hasCampaignSelection
+                  ? `Ad sets for ${campaignSelectedArr.length} campaign${campaignSelectedArr.length > 1 ? 's' : ''}`
+                  : 'Ad sets';
+                const filteredAdSetsCount = hasCampaignSelection
+                  ? adSets.filter(a => selectedCampaignIds.has(a.campaignId)).length
+                  : adSets.length;
+                badge = (
+                  <span className={cn("text-xs px-2.5 py-0.5 rounded-full font-normal ml-2", hasCampaignSelection ? "text-[#00000099]" : "bg-[#0000000f] text-[#00000099]")}>
+                    {hasCampaignSelection ? `${filteredAdSetsCount} total` : filteredAdSetsCount}
+                  </span>
+                );
+              } else if (tab.id === 'ads') {
+                labelText = hasCampaignSelection
+                  ? `Ads for ${campaignSelectedArr.length} campaign${campaignSelectedArr.length > 1 ? 's' : ''}`
+                  : 'Ads';
+                if (selectedArr.length > 0) {
+                  badge = (
+                    <span className="text-xs bg-[#057642] text-white px-2.5 py-0.5 rounded-full font-semibold ml-2">
+                      {selectedArr.length} selected
+                    </span>
+                  );
+                } else {
+                  const filteredAdsCount = hasCampaignSelection
+                    ? ads.filter(a => selectedCampaignIds.has(a.campaignId)).length
+                    : ads.length;
+                  badge = (
+                    <span className={cn("text-xs px-2.5 py-0.5 rounded-full font-normal ml-2", hasCampaignSelection ? "text-[#00000099]" : "bg-[#0000000f] text-[#00000099]")}>
+                      {hasCampaignSelection ? `${filteredAdsCount} total` : filteredAdsCount}
+                    </span>
+                  );
+                }
+              }
+
+              // Custom Star-in-folder icon SVG for Adsets & Ads
+              if (tab.id === 'adsets' || tab.id === 'ads') {
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => navigate(tab.path)}
+                    className={`
+                      relative flex items-center gap-2 px-4 py-3 text-[14px]
+                      transition-colors duration-150 border-b-[3px] -mb-px
+                      ${isActive
+                        ? 'border-black text-[#000000e0] font-bold'
+                        : 'border-transparent text-[#00000099] hover:text-[#000000e0] font-medium'}
+                    `}
+                  >
+                    <svg className={cn("h-4 w-4 shrink-0", isActive ? "text-[#000000e0]" : "text-[#00000099]")} viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-4.75 9.94L13 14.5l-2.25 1.44.68-2.61-2.06-1.78 2.68-.23L13 8.88l1.13 2.44 2.68.23-2.06 1.78.68 2.61z" />
+                    </svg>
+                    <span>{labelText}</span>
+                    {badge}
+                  </button>
+                );
+              }
+
               return (
                 <button
-                  key={tab.label}
+                  key={tab.id}
                   onClick={() => navigate(tab.path)}
-                  className={`px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors duration-150 ${
-                    active
-                      ? 'border-primary text-primary'
-                      : 'border-transparent text-muted-foreground hover:text-foreground'
-                  }`}
+                  className={`
+                    relative flex items-center gap-2 px-4 py-3 text-[14px]
+                    transition-colors duration-150 border-b-[3px] -mb-px
+                    ${isActive
+                      ? 'border-black text-[#000000e0] font-bold'
+                      : 'border-transparent text-[#00000099] hover:text-[#000000e0] font-medium'}
+                  `}
                 >
-                  {tab.label}
+                  <Folder className={cn("h-4 w-4 shrink-0", isActive ? "text-[#000000e0]" : "text-[#00000099]")} />
+                  <span>{labelText}</span>
+                  {badge}
                 </button>
               );
             })}
@@ -156,19 +247,26 @@ export default function AdsPage() {
         </div>
 
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center gap-2 px-4 py-2.5 bg-card border-b border-border">
-          <Button
-            className="h-8 text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/90 gap-1 px-3"
+        <div className="flex flex-wrap items-center gap-2.5 px-4 py-2.5 bg-white border-b border-[#e0e0e0] shrink-0">
+          {/* Create */}
+          <button
+            className="h-8 text-xs font-bold bg-[#0A66C2] hover:bg-[#004b8d] text-white px-4 rounded flex items-center gap-1.5 transition-colors"
             onClick={() => toast.info('Create ad')}
           >
-            <Plus className="h-3.5 w-3.5" /> Create
-          </Button>
+            Create
+            <ChevronDown className="h-3.5 w-3.5" />
+          </button>
 
+          {/* Bulk actions */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="h-8 text-xs gap-1 px-3 border-border" disabled={!someSelected}>
-                Bulk actions <ChevronDown className="h-3 w-3" />
-              </Button>
+              <button
+                className="h-8 text-xs font-bold bg-white border border-[#0A66C2] text-[#0A66C2] hover:bg-[#0A66C2]/05 px-4 rounded flex items-center gap-1.5 transition-colors disabled:opacity-50 disabled:pointer-events-none"
+                disabled={!someSelected}
+              >
+                Bulk actions
+                <ChevronDown className="h-3.5 w-3.5 text-[#0A66C2]" />
+              </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
               <DropdownMenuItem onClick={() => { toast.success(`${selectedArr.length} ad(s) paused`); clearAdSelection(); }}>
@@ -184,11 +282,16 @@ export default function AdsPage() {
             </DropdownMenuContent>
           </DropdownMenu>
 
+          {/* Delete */}
           <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
             <AlertDialogTrigger asChild>
-              <Button variant="outline" size="icon" className="h-8 w-8 border-border text-muted-foreground hover:text-destructive" disabled={!someSelected}>
-                <Trash2 className="h-3.5 w-3.5" />
-              </Button>
+              <button
+                className="h-8 w-8 bg-white border border-[#0A66C2] text-[#0A66C2] hover:bg-[#0A66C2]/05 rounded flex items-center justify-center transition-colors disabled:opacity-50 disabled:pointer-events-none"
+                disabled={!someSelected}
+                aria-label="Delete selected ads"
+              >
+                <Trash2 className="h-4 w-4 text-[#0A66C2]" />
+              </button>
             </AlertDialogTrigger>
             <AlertDialogContent className="max-w-[calc(100%-2rem)] md:max-w-lg">
               <AlertDialogHeader>
@@ -203,94 +306,141 @@ export default function AdsPage() {
           </AlertDialog>
 
           <div className="flex-1" />
-          <Button variant="outline" className="h-8 text-xs gap-1.5 px-3 border-border" onClick={handleExport}>
-            <Download className="h-3.5 w-3.5 text-muted-foreground" />
-            <span className="hidden sm:block">Export</span>
-          </Button>
+
+          {/* Export */}
+          <button
+            className="h-8 text-xs font-semibold px-4 py-1.5 rounded-full border border-[#0A66C2] text-[#0A66C2] hover:bg-[#0A66C2]/05 transition-colors"
+            onClick={handleExport}
+          >
+            Export
+          </button>
         </div>
 
-        {/* Search */}
-        <div className="flex items-center gap-2 px-4 py-2 bg-card border-b border-border">
-          <div className="relative flex-1 min-w-[180px] max-w-xs">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-            <Input
-              placeholder="Search by name or ID"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="h-8 text-xs pl-8 border-border"
-            />
-          </div>
+        {/* Filter bar */}
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 bg-[#f8f9fa] border-b border-[#e0e0e0] shrink-0">
+          {/* Search */}
+          <input
+            placeholder="Search by name or ID"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="h-8 text-[13px] border border-[#b2b2b2] hover:border-black focus:border-[#0A66C2] px-3 py-1.5 rounded w-[180px] focus:outline-none transition-colors"
+            aria-label="Search ads"
+          />
         </div>
 
         {/* Table */}
-        <div className="flex-1 bg-card">
+        <div className="flex-1 bg-[#f8f9fa] overflow-y-auto">
           {sorted.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="flex flex-col items-center justify-center py-20 text-center bg-white h-full">
               <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center mb-4">
                 <Image className="h-7 w-7 text-muted-foreground" />
               </div>
               <p className="text-muted-foreground text-sm mb-4">No ads found</p>
-              <Button className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => toast.info('Create ad')}>
-                <Plus className="h-4 w-4 mr-1.5" /> Create ad
-              </Button>
+              <button
+                className="h-8 text-xs font-bold bg-[#0A66C2] hover:bg-[#004b8d] text-white px-4 rounded transition-colors"
+                onClick={() => toast.info('Create ad')}
+              >
+                Create ad
+              </button>
             </div>
           ) : (
-            <div className="w-full max-w-full overflow-x-auto">
+            <div className="w-full max-w-full overflow-x-auto bg-white">
               <table className="w-full min-w-[750px] border-collapse">
                 <thead>
-                  <tr className="border-b border-border">
-                    <th className="table-header-cell w-10 text-center">
-                      <Checkbox checked={allSelected} onCheckedChange={handleSelectAll} className="mx-auto" aria-label="Select all" />
-                    </th>
-                    <th className="table-header-cell text-left cursor-pointer hover:text-foreground" onClick={() => handleSort('name')}>
+                  <tr className="border-b border-[#e0e0e0]">
+                    {/* Checkbox column header - empty */}
+                    <th className="w-12 bg-white border-b border-[#e0e0e0]" />
+                    <th className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-left cursor-pointer hover:text-black select-none" onClick={() => handleSort('name')}>
                       <span className="inline-flex items-center gap-1">Ad <SortIcon col="name" /></span>
                     </th>
-                    <th className="table-header-cell text-center w-16">On/Off</th>
-                    <th className="table-header-cell text-left cursor-pointer hover:text-foreground" onClick={() => handleSort('status')}>
+                    <th className="w-20 px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-center">Off/On</th>
+                    <th className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-left cursor-pointer hover:text-black select-none" onClick={() => handleSort('status')}>
                       <span className="inline-flex items-center gap-1">Status <SortIcon col="status" /></span>
                     </th>
-                    <th className="table-header-cell text-left">Format</th>
-                    <th className="table-header-cell text-right cursor-pointer hover:text-foreground" onClick={() => handleSort('spent')}>
+                    <th className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-left">Format</th>
+                    <th className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none" onClick={() => handleSort('spent')}>
                       <span className="inline-flex items-center justify-end gap-1">Spent <SortIcon col="spent" /></span>
                     </th>
-                    <th className="table-header-cell text-right cursor-pointer hover:text-foreground" onClick={() => handleSort('impressions')}>
+                    <th className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none" onClick={() => handleSort('impressions')}>
                       <span className="inline-flex items-center justify-end gap-1">Impressions <SortIcon col="impressions" /></span>
                     </th>
-                    <th className="table-header-cell text-right cursor-pointer hover:text-foreground" onClick={() => handleSort('clicks')}>
+                    <th className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none" onClick={() => handleSort('clicks')}>
                       <span className="inline-flex items-center justify-end gap-1">Clicks <SortIcon col="clicks" /></span>
                     </th>
-                    <th className="table-header-cell w-8" />
+                    <th className="w-12 bg-white border-b border-[#e0e0e0]" />
                   </tr>
                 </thead>
                 <tbody>
+                  {/* Selected aggregate row */}
+                  {selectedArr.length > 0 && (
+                    <tr className="border-b border-[#e0e0e0] bg-[#f8f9fa]">
+                      <td className="px-4 py-3.5 text-center">
+                        <Checkbox
+                          checked={false}
+                          onCheckedChange={() => clearAdSelection()}
+                          aria-label="Clear selection"
+                          className="mx-auto"
+                        />
+                      </td>
+                      <td className="px-4 py-3.5">
+                        <span className="text-[13px] font-bold text-[#000000e0]">
+                          {selectedArr.length} selected ad{selectedArr.length > 1 ? 's' : ''}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3.5 text-center text-xs text-[#00000060] font-medium">-</td>
+                      <td className="px-4 py-3.5 text-xs text-[#00000060] font-medium">-</td>
+                      <td className="px-4 py-3.5 text-xs text-[#00000060] font-medium">-</td>
+                      <td className="px-4 py-3.5 text-right text-[13px] font-bold text-[#000000e0] tabular-nums">
+                        {formatCurrency(totalSpent)}
+                      </td>
+                      <td className="px-4 py-3.5 text-right text-[13px] font-bold text-[#000000e0] tabular-nums">
+                        {formatNumber(totalImpressions)}
+                      </td>
+                      <td className="px-4 py-3.5 text-right text-[13px] font-bold text-[#000000e0] tabular-nums">
+                        {formatNumber(totalClicks)}
+                      </td>
+                      <td className="px-4 py-3.5" />
+                    </tr>
+                  )}
+
                   {sorted.map(ad => {
                     const selected = selectedAdIds.has(ad.id);
                     return (
-                      <tr key={ad.id} className={cn('border-b border-border transition-colors duration-150', selected ? 'bg-[hsl(211,91%,97%)]' : 'hover:bg-[hsl(216,17%,98%)]')}>
-                        <td className="table-body-cell text-center w-10">
+                      <tr
+                        key={ad.id}
+                        className={cn(
+                          'border-b border-[#e0e0e0] transition-colors duration-100',
+                          selected ? 'bg-[#eef3f8]' : 'bg-white hover:bg-[#00000005]'
+                        )}
+                      >
+                        <td className="px-4 py-3.5 text-center w-12">
                           <Checkbox checked={selected} onCheckedChange={() => toggleAdSelection(ad.id)} className="mx-auto" onClick={e => e.stopPropagation()} />
                         </td>
-                        <td className="table-body-cell max-w-[220px]">
-                          <p className="text-sm font-semibold text-foreground truncate max-w-[200px]">{ad.name}</p>
-                          <p className="text-xs text-muted-foreground truncate">{ad.id} · {ad.adSetName}</p>
+                        <td className="px-4 py-3.5 max-w-[220px]">
+                          <p className="text-[13px] font-bold text-[#0a66c2] truncate max-w-[280px]">{ad.name}</p>
+                          <p className="text-[11px] text-[#00000099] truncate mt-0.5">{ad.id} · {ad.adSetName}</p>
                         </td>
-                        <td className="table-body-cell text-center">
+                        <td className="px-4 py-3.5 text-center w-20">
                           <CampaignToggle
                             checked={ad.isActive}
                             onChange={() => { toggleAdActive(ad.id); toast.success(ad.isActive ? `"${ad.name}" paused` : `"${ad.name}" resumed`); }}
                           />
                         </td>
-                        <td className="table-body-cell"><StatusBadge status={ad.status} /></td>
-                        <td className="table-body-cell">
-                          <span className="text-xs bg-secondary text-muted-foreground px-2 py-0.5 rounded">{ad.format}</span>
+                        <td className="px-4 py-3.5"><StatusBadge status={ad.status} /></td>
+                        <td className="px-4 py-3.5">
+                          <span className="text-[11px] bg-secondary text-muted-foreground px-2 py-0.5 rounded">{ad.format}</span>
                         </td>
-                        <td className="table-body-cell text-right tabular-nums font-medium">{ad.spent > 0 ? formatCurrency(ad.spent) : '—'}</td>
-                        <td className="table-body-cell text-right tabular-nums text-muted-foreground">{ad.impressions > 0 ? formatNumber(ad.impressions) : '—'}</td>
-                        <td className="table-body-cell text-right tabular-nums text-muted-foreground">{ad.clicks > 0 ? formatNumber(ad.clicks) : '—'}</td>
-                        <td className="table-body-cell">
-                          <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground" aria-label="View ad" onClick={() => toast.info(`View ad: ${ad.name}`)}>
+                        <td className="px-4 py-3.5 text-right font-medium text-[13px] text-[#000000e0] tabular-nums">{ad.spent > 0 ? formatCurrency(ad.spent) : '—'}</td>
+                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">{ad.impressions > 0 ? formatNumber(ad.impressions) : '—'}</td>
+                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">{ad.clicks > 0 ? formatNumber(ad.clicks) : '—'}</td>
+                        <td className="px-4 py-3.5 text-center w-12">
+                          <button
+                            className="h-6 w-6 rounded hover:bg-black/5 flex items-center justify-center text-[#00000099] hover:text-black focus:outline-none"
+                            aria-label="View ad"
+                            onClick={() => toast.info(`View ad: ${ad.name}`)}
+                          >
                             <ChevronRight className="h-4 w-4" />
-                          </Button>
+                          </button>
                         </td>
                       </tr>
                     );
@@ -299,10 +449,16 @@ export default function AdsPage() {
               </table>
             </div>
           )}
+        </div>
 
-          <div className="flex items-center px-4 py-2 border-t border-border bg-[hsl(216,17%,98%)]">
-            <span className="text-xs text-muted-foreground">Showing {sorted.length} of {ads.length} ads</span>
-          </div>
+        {/* Footer */}
+        <div className="flex items-center justify-between px-4 py-3 border-t border-[#e0e0e0] bg-[#f8f9fa] shrink-0 mt-auto">
+          <span className="text-xs text-[#00000099]">Showing {sorted.length} of {ads.length} ads</span>
+          {someSelected && (
+            <span className="text-xs text-[#004182] font-semibold">
+              {selectedArr.length} selected
+            </span>
+          )}
         </div>
       </div>
     </AppLayout>

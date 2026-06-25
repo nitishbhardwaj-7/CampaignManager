@@ -23,6 +23,9 @@ export default {
             }
         },
         extend: {
+            fontFamily: {
+                sans: ['"Segoe UI Custom"', 'sans-serif'],
+            },
             colors: {
                 border: 'hsl(var(--border))',
                 borderColor: {

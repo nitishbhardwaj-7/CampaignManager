@@ -9,6 +9,7 @@ import {
   Filter,
   Download,
   ChevronRight,
+  Folder,
 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
@@ -35,7 +36,7 @@ import StatusBadge from '@/components/common/StatusBadge';
 import CampaignToggle from '@/components/common/CampaignToggle';
 import AppLayout from '@/components/layouts/AppLayout';
 import { useCampaigns } from '@/contexts/CampaignContext';
-import { formatCurrency, formatNumber } from '@/data/mockData';
+import { formatCurrency, formatNumber, formatPercent } from '@/data/mockData';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
@@ -46,6 +47,7 @@ type SortDir = 'asc' | 'desc';
 export default function AdSetsPage() {
   const navigate = useNavigate();
   const {
+    campaigns,
     adSets,
     selectedAdSetIds,
     toggleAdSetSelection,
@@ -53,6 +55,7 @@ export default function AdSetsPage() {
     clearAdSetSelection,
     toggleAdSetActive,
     deleteAdSets,
+    selectedCampaignIds,
   } = useCampaigns();
 
   const [search, setSearch] = useState('');
@@ -123,32 +126,121 @@ export default function AdSetsPage() {
     toast.success('Ad sets exported');
   };
 
+  const selectedAdSetsList = sorted.filter(a => selectedAdSetIds.has(a.id));
+  const totalSpent = selectedAdSetsList.reduce((sum, a) => sum + a.spent, 0);
+  const totalImpressions = selectedAdSetsList.reduce((sum, a) => sum + a.impressions, 0);
+  const totalClicks = selectedAdSetsList.reduce((sum, a) => sum + a.clicks, 0);
+
+  const totalConversions = selectedAdSetsList.reduce((sum, a) => sum + Math.round(a.clicks * 0.08), 0);
+  const totalLeads = selectedAdSetsList.reduce((sum, a) => sum + Math.round(Math.round(a.clicks * 0.08) * 0.7), 0);
+
+  const aggregateCtr = totalImpressions > 0 ? (totalClicks / totalImpressions) * 100 : 0;
+  const aggregateCpm = totalImpressions > 0 ? (totalSpent / totalImpressions) * 1000 : 0;
+  const aggregateCpc = totalClicks > 0 ? totalSpent / totalClicks : 0;
+  const aggregateCostPerResult = totalConversions > 0 ? totalSpent / totalConversions : 0;
+  const aggregateCostPerConversion = totalConversions > 0 ? totalSpent / totalConversions : 0;
+  const aggregateCostPerLead = totalLeads > 0 ? totalSpent / totalLeads : 0;
+
+  const campaignSelectedArr = Array.from(selectedCampaignIds);
+  const hasCampaignSelection = campaignSelectedArr.length > 0;
+
   return (
     <AppLayout>
-      <div className="flex flex-col h-full">
-        {/* Page header */}
-        <div className="px-6 pt-5 pb-0 bg-card border-b border-border">
-          <h1 className="text-lg font-semibold text-foreground mb-4">Advertise</h1>
-
+      <div className="flex flex-col h-full bg-white">
+        {/* Page header (Tabs) */}
+        <div className="px-4 pt-3 pb-0 bg-white border-b border-[#e0e0e0] shrink-0">
           {/* Tabs */}
-          <div className="flex items-center gap-0 -mb-px">
+          <div className="flex items-center gap-0 border-b-0 -mb-px">
             {[
-              { label: 'Campaigns', path: '/' },
-              { label: 'Ad sets', path: '/adsets' },
-              { label: 'Ads', path: '/ads' },
+              { id: 'campaigns', label: 'Campaigns', path: '/' },
+              { id: 'adsets', label: 'Ad sets', path: '/adsets' },
+              { id: 'ads', label: 'Ads', path: '/ads' },
             ].map(tab => {
-              const active = location.pathname === tab.path;
+              const isActive = tab.id === 'adsets';
+
+              // Determine dynamic label and badge
+              let labelText = tab.label;
+              let badge: React.ReactNode = null;
+
+              if (tab.id === 'campaigns') {
+                labelText = 'Campaigns';
+                if (hasCampaignSelection) {
+                  badge = (
+                    <span className="text-xs bg-[#057642] text-white px-2.5 py-0.5 rounded-full font-semibold ml-2">
+                      {campaignSelectedArr.length} selected
+                    </span>
+                  );
+                } else {
+                  badge = (
+                    <span className="text-xs bg-[#0000000f] text-[#00000099] px-2.5 py-0.5 rounded-full font-normal ml-2">
+                      {campaigns.length}
+                    </span>
+                  );
+                }
+              } else if (tab.id === 'adsets') {
+                labelText = hasCampaignSelection
+                  ? `Ad sets for ${campaignSelectedArr.length} campaign${campaignSelectedArr.length > 1 ? 's' : ''}`
+                  : 'Ad sets';
+                if (selectedArr.length > 0) {
+                  badge = (
+                    <span className="text-xs bg-[#057642] text-white px-2.5 py-0.5 rounded-full font-semibold ml-2">
+                      {selectedArr.length} selected
+                    </span>
+                  );
+                } else {
+                  const filteredAdSetsCount = hasCampaignSelection
+                    ? adSets.filter(a => selectedCampaignIds.has(a.campaignId)).length
+                    : adSets.length;
+                  badge = (
+                    <span className={cn("text-xs px-2.5 py-0.5 rounded-full font-normal ml-2", hasCampaignSelection ? "text-[#00000099]" : "bg-[#0000000f] text-[#00000099]")}>
+                      {hasCampaignSelection ? `${filteredAdSetsCount} total` : filteredAdSetsCount}
+                    </span>
+                  );
+                }
+              } else if (tab.id === 'ads') {
+                labelText = hasCampaignSelection
+                  ? `Ads for ${campaignSelectedArr.length} campaign${campaignSelectedArr.length > 1 ? 's' : ''}`
+                  : 'Ads';
+              }
+
+              // Custom Star-in-folder icon SVG for Adsets & Ads
+              if (tab.id === 'adsets' || tab.id === 'ads') {
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => navigate(tab.path)}
+                    className={`
+                      relative flex items-center gap-2 px-4 py-3 text-[14px]
+                      transition-colors duration-150 border-b-[3px] -mb-px
+                      ${isActive
+                        ? 'border-black text-[#000000e0] font-bold'
+                        : 'border-transparent text-[#00000099] hover:text-[#000000e0] font-medium'}
+                    `}
+                  >
+                    <svg className={cn("h-4 w-4 shrink-0", isActive ? "text-[#000000e0]" : "text-[#00000099]")} viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-4.75 9.94L13 14.5l-2.25 1.44.68-2.61-2.06-1.78 2.68-.23L13 8.88l1.13 2.44 2.68.23-2.06 1.78.68 2.61z" />
+                    </svg>
+                    <span>{labelText}</span>
+                    {badge}
+                  </button>
+                );
+              }
+
               return (
                 <button
-                  key={tab.label}
+                  key={tab.id}
                   onClick={() => navigate(tab.path)}
-                  className={`px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors duration-150 ${
-                    active
-                      ? 'border-primary text-primary'
-                      : 'border-transparent text-muted-foreground hover:text-foreground'
-                  }`}
+                  className={`
+                    relative flex items-center gap-2 px-4 py-3 text-[14px]
+                    transition-colors duration-150 border-b-[3px] -mb-px
+                    ${isActive
+                      ? 'border-black text-[#000000e0] font-bold'
+                      : 'border-transparent text-[#00000099] hover:text-[#000000e0] font-medium'}
+                  `}
                 >
-                  {tab.label}
+                  <Folder className={cn("h-4 w-4 shrink-0", isActive ? "text-[#000000e0]" : "text-[#00000099]")} />
+                  <span>{labelText}</span>
+                  {badge}
                 </button>
               );
             })}
@@ -156,19 +248,26 @@ export default function AdSetsPage() {
         </div>
 
         {/* Toolbar */}
-        <div className="flex flex-wrap items-center gap-2 px-4 py-2.5 bg-card border-b border-border">
-          <Button
-            className="h-8 text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/90 gap-1 px-3"
+        <div className="flex flex-wrap items-center gap-2.5 px-4 py-2.5 bg-white border-b border-[#e0e0e0] shrink-0">
+          {/* Create */}
+          <button
+            className="h-8 text-xs font-bold bg-[#0A66C2] hover:bg-[#004b8d] text-white px-4 rounded flex items-center gap-1.5 transition-colors"
             onClick={() => toast.info('Create ad set')}
           >
-            <Plus className="h-3.5 w-3.5" /> Create
-          </Button>
+            Create
+            <ChevronDown className="h-3.5 w-3.5" />
+          </button>
 
+          {/* Bulk actions */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="h-8 text-xs gap-1 px-3 border-border" disabled={!someSelected}>
-                Bulk actions <ChevronDown className="h-3 w-3" />
-              </Button>
+              <button
+                className="h-8 text-xs font-bold bg-white border border-[#0A66C2] text-[#0A66C2] hover:bg-[#0A66C2]/05 px-4 rounded flex items-center gap-1.5 transition-colors disabled:opacity-50 disabled:pointer-events-none"
+                disabled={!someSelected}
+              >
+                Bulk actions
+                <ChevronDown className="h-3.5 w-3.5 text-[#0A66C2]" />
+              </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
               <DropdownMenuItem onClick={() => { toast.success(`${selectedArr.length} ad set(s) paused`); clearAdSetSelection(); }}>
@@ -184,11 +283,16 @@ export default function AdSetsPage() {
             </DropdownMenuContent>
           </DropdownMenu>
 
+          {/* Delete */}
           <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
             <AlertDialogTrigger asChild>
-              <Button variant="outline" size="icon" className="h-8 w-8 border-border text-muted-foreground hover:text-destructive" disabled={!someSelected}>
-                <Trash2 className="h-3.5 w-3.5" />
-              </Button>
+              <button
+                className="h-8 w-8 bg-white border border-[#0A66C2] text-[#0A66C2] hover:bg-[#0A66C2]/05 rounded flex items-center justify-center transition-colors disabled:opacity-50 disabled:pointer-events-none"
+                disabled={!someSelected}
+                aria-label="Delete selected ad sets"
+              >
+                <Trash2 className="h-4 w-4 text-[#0A66C2]" />
+              </button>
             </AlertDialogTrigger>
             <AlertDialogContent className="max-w-[calc(100%-2rem)] md:max-w-lg">
               <AlertDialogHeader>
@@ -203,87 +307,205 @@ export default function AdSetsPage() {
           </AlertDialog>
 
           <div className="flex-1" />
-          <Button variant="outline" className="h-8 text-xs gap-1.5 px-3 border-border" onClick={handleExport}>
-            <Download className="h-3.5 w-3.5 text-muted-foreground" />
-            <span className="hidden sm:block">Export</span>
-          </Button>
+
+          {/* Export */}
+          <button
+            className="h-8 text-xs font-semibold px-4 py-1.5 rounded-full border border-[#0A66C2] text-[#0A66C2] hover:bg-[#0A66C2]/05 transition-colors"
+            onClick={handleExport}
+          >
+            Export
+          </button>
         </div>
 
-        {/* Filter */}
-        <div className="flex items-center gap-2 px-4 py-2 bg-card border-b border-border">
-          <div className="relative flex-1 min-w-[180px] max-w-xs">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-            <Input
-              placeholder="Search by name or ID"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="h-8 text-xs pl-8 border-border"
-            />
-          </div>
+        {/* Filter bar */}
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 bg-[#f8f9fa] border-b border-[#e0e0e0] shrink-0">
+          {/* Search */}
+          <input
+            placeholder="Search by name or ID"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="h-8 text-[13px] border border-[#b2b2b2] hover:border-black focus:border-[#0A66C2] px-3 py-1.5 rounded w-[180px] focus:outline-none transition-colors"
+            aria-label="Search ad sets"
+          />
         </div>
 
         {/* Table */}
-        <div className="flex-1 bg-card">
+        <div className="flex-1 bg-[#f8f9fa] overflow-y-auto">
           {sorted.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-center">
+            <div className="flex flex-col items-center justify-center py-20 text-center bg-white h-full">
               <p className="text-muted-foreground text-sm mb-4">No ad sets found</p>
-              <Button className="bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => toast.info('Create ad set')}>
-                <Plus className="h-4 w-4 mr-1.5" /> Create ad set
-              </Button>
+              <button
+                className="h-8 text-xs font-bold bg-[#0A66C2] hover:bg-[#004b8d] text-white px-4 rounded transition-colors"
+                onClick={() => toast.info('Create ad set')}
+              >
+                Create ad set
+              </button>
             </div>
           ) : (
-            <div className="w-full max-w-full overflow-x-auto">
-              <table className="w-full min-w-[700px] border-collapse">
+            <div className="w-full max-w-full overflow-x-auto bg-white">
+              <table className="w-full min-w-[1900px] border-collapse">
                 <thead>
-                  <tr className="border-b border-border">
-                    <th className="table-header-cell w-10 text-center">
-                      <Checkbox checked={allSelected} onCheckedChange={handleSelectAll} className="mx-auto" aria-label="Select all" />
-                    </th>
-                    <th className="table-header-cell text-left cursor-pointer hover:text-foreground" onClick={() => handleSort('name')}>
+                  <tr className="border-b border-[#e0e0e0]">
+                    {/* Checkbox column header - empty */}
+                    <th className="w-12 bg-white border-b border-[#e0e0e0]" />
+                    <th className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-left cursor-pointer hover:text-black select-none min-w-[240px] whitespace-nowrap" onClick={() => handleSort('name')}>
                       <span className="inline-flex items-center gap-1">Ad set <SortIcon col="name" /></span>
                     </th>
-                    <th className="table-header-cell text-center w-16">On/Off</th>
-                    <th className="table-header-cell text-left cursor-pointer hover:text-foreground" onClick={() => handleSort('status')}>
+                    <th className="w-20 px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-center whitespace-nowrap">Off/On</th>
+                    <th className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-left cursor-pointer hover:text-black select-none whitespace-nowrap" onClick={() => handleSort('status')}>
                       <span className="inline-flex items-center gap-1">Status <SortIcon col="status" /></span>
                     </th>
-                    <th className="table-header-cell text-right cursor-pointer hover:text-foreground" onClick={() => handleSort('spent')}>
+                    <th className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none whitespace-nowrap" onClick={() => handleSort('spent')}>
                       <span className="inline-flex items-center justify-end gap-1">Spent <SortIcon col="spent" /></span>
                     </th>
-                    <th className="table-header-cell text-right cursor-pointer hover:text-foreground" onClick={() => handleSort('impressions')}>
+                    <th className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-right whitespace-nowrap">Cost per result</th>
+                    <th className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none whitespace-nowrap" onClick={() => handleSort('impressions')}>
                       <span className="inline-flex items-center justify-end gap-1">Impressions <SortIcon col="impressions" /></span>
                     </th>
-                    <th className="table-header-cell text-right cursor-pointer hover:text-foreground" onClick={() => handleSort('clicks')}>
+                    <th className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none whitespace-nowrap" onClick={() => handleSort('clicks')}>
                       <span className="inline-flex items-center justify-end gap-1">Clicks <SortIcon col="clicks" /></span>
                     </th>
-                    <th className="table-header-cell w-8" />
+                    <th className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-right whitespace-nowrap">Average CTR</th>
+                    <th className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-right whitespace-nowrap">Average CPM</th>
+                    <th className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-right whitespace-nowrap">Average CPC</th>
+                    <th className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-right whitespace-nowrap">Conversions</th>
+                    <th className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-right whitespace-nowrap">Cost per conversion</th>
+                    <th className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-right whitespace-nowrap">Leads</th>
+                    <th className="px-4 py-3 bg-white text-xs font-bold text-[#000000e0] border-b border-[#e0e0e0] text-right whitespace-nowrap">Cost per lead</th>
+                    <th className="w-12 bg-white border-b border-[#e0e0e0]" />
                   </tr>
                 </thead>
                 <tbody>
+                  {/* Selected aggregate row */}
+                  {selectedArr.length > 0 && (
+                    <tr className="border-b border-[#e0e0e0] bg-[#f8f9fa]">
+                      <td className="px-4 py-3.5 text-center">
+                        <Checkbox
+                          checked={false}
+                          onCheckedChange={() => clearAdSetSelection()}
+                          aria-label="Clear selection"
+                          className="mx-auto"
+                        />
+                      </td>
+                      <td className="px-4 py-3.5">
+                        <span className="text-[13px] font-bold text-[#000000e0]">
+                          {selectedArr.length} selected ad set{selectedArr.length > 1 ? 's' : ''}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3.5 text-center text-xs text-[#00000060] font-medium">-</td>
+                      <td className="px-4 py-3.5 text-xs text-[#00000060] font-medium">-</td>
+                      <td className="px-4 py-3.5 text-right text-[13px] font-bold text-[#000000e0] tabular-nums">
+                        {totalSpent > 0 ? formatCurrency(totalSpent) : (totalSpent === 0 ? '$0.00' : '-')}
+                      </td>
+                      <td className="px-4 py-3.5 text-right text-[13px] font-bold text-[#000000e0] tabular-nums">
+                        {aggregateCostPerResult > 0 ? formatCurrency(aggregateCostPerResult) : '-'}
+                      </td>
+                      <td className="px-4 py-3.5 text-right text-[13px] font-bold text-[#000000e0] tabular-nums">
+                        {totalImpressions > 0 ? formatNumber(totalImpressions) : (totalImpressions === 0 ? '0' : '-')}
+                      </td>
+                      <td className="px-4 py-3.5 text-right text-[13px] font-bold text-[#000000e0] tabular-nums">
+                        {totalClicks > 0 ? formatNumber(totalClicks) : (totalClicks === 0 ? '0' : '-')}
+                      </td>
+                      <td className="px-4 py-3.5 text-right text-[13px] font-bold text-[#000000e0] tabular-nums">
+                        {aggregateCtr > 0 ? formatPercent(aggregateCtr) : '-'}
+                      </td>
+                      <td className="px-4 py-3.5 text-right text-[13px] font-bold text-[#000000e0] tabular-nums">
+                        {aggregateCpm > 0 ? formatCurrency(aggregateCpm) : '-'}
+                      </td>
+                      <td className="px-4 py-3.5 text-right text-[13px] font-bold text-[#000000e0] tabular-nums">
+                        {aggregateCpc > 0 ? formatCurrency(aggregateCpc) : '-'}
+                      </td>
+                      <td className="px-4 py-3.5 text-right text-[13px] font-bold text-[#000000e0] tabular-nums">
+                        {totalConversions > 0 ? formatNumber(totalConversions) : (totalConversions === 0 ? '0' : '-')}
+                      </td>
+                      <td className="px-4 py-3.5 text-right text-[13px] font-bold text-[#000000e0] tabular-nums">
+                        {aggregateCostPerConversion > 0 ? formatCurrency(aggregateCostPerConversion) : '-'}
+                      </td>
+                      <td className="px-4 py-3.5 text-right text-[13px] font-bold text-[#000000e0] tabular-nums">
+                        {totalLeads > 0 ? formatNumber(totalLeads) : (totalLeads === 0 ? '0' : '-')}
+                      </td>
+                      <td className="px-4 py-3.5 text-right text-[13px] font-bold text-[#000000e0] tabular-nums">
+                        {aggregateCostPerLead > 0 ? formatCurrency(aggregateCostPerLead) : '-'}
+                      </td>
+                      <td className="px-4 py-3.5" />
+                    </tr>
+                  )}
+
                   {sorted.map(adSet => {
                     const selected = selectedAdSetIds.has(adSet.id);
+                    const conversions = Math.round(adSet.clicks * 0.08);
+                    const leads = Math.round(conversions * 0.7);
+
+                    const ctr = adSet.impressions > 0 ? (adSet.clicks / adSet.impressions) * 100 : 0;
+                    const cpm = adSet.impressions > 0 ? (adSet.spent / adSet.impressions) * 1000 : 0;
+                    const cpc = adSet.clicks > 0 ? adSet.spent / adSet.clicks : 0;
+                    const costPerResult = conversions > 0 ? adSet.spent / conversions : 0;
+                    const costPerConversion = conversions > 0 ? adSet.spent / conversions : 0;
+                    const costPerLead = leads > 0 ? adSet.spent / leads : 0;
+
                     return (
-                      <tr key={adSet.id} className={cn('border-b border-border transition-colors duration-150', selected ? 'bg-[hsl(211,91%,97%)]' : 'hover:bg-[hsl(216,17%,98%)]')}>
-                        <td className="table-body-cell text-center w-10">
+                      <tr
+                        key={adSet.id}
+                        className={cn(
+                          'border-b border-[#e0e0e0] transition-colors duration-100',
+                          selected ? 'bg-[#eef3f8]' : 'bg-white hover:bg-[#00000005]'
+                        )}
+                      >
+                        <td className="px-4 py-3.5 text-center w-12">
                           <Checkbox checked={selected} onCheckedChange={() => toggleAdSetSelection(adSet.id)} className="mx-auto" onClick={e => e.stopPropagation()} />
                         </td>
-                        <td className="table-body-cell max-w-xs">
-                          <p className="text-sm font-semibold text-foreground truncate max-w-[200px]">{adSet.name}</p>
-                          <p className="text-xs text-muted-foreground">{adSet.id} · {adSet.campaignName}</p>
+                        <td className="px-4 py-3.5 max-w-xs">
+                          <p className="text-[13px] font-bold text-[#0a66c2] truncate max-w-[280px]">{adSet.name}</p>
+                          <p className="text-[11px] text-[#00000099] mt-0.5">{adSet.id} · {adSet.campaignName}</p>
                         </td>
-                        <td className="table-body-cell text-center">
+                        <td className="px-4 py-3.5 text-center w-20">
                           <CampaignToggle
                             checked={adSet.isActive}
                             onChange={() => { toggleAdSetActive(adSet.id); toast.success(adSet.isActive ? `"${adSet.name}" paused` : `"${adSet.name}" resumed`); }}
                           />
                         </td>
-                        <td className="table-body-cell"><StatusBadge status={adSet.status} /></td>
-                        <td className="table-body-cell text-right tabular-nums font-medium">{adSet.spent > 0 ? formatCurrency(adSet.spent) : '—'}</td>
-                        <td className="table-body-cell text-right tabular-nums text-muted-foreground">{adSet.impressions > 0 ? formatNumber(adSet.impressions) : '—'}</td>
-                        <td className="table-body-cell text-right tabular-nums text-muted-foreground">{adSet.clicks > 0 ? formatNumber(adSet.clicks) : '—'}</td>
-                        <td className="table-body-cell">
-                          <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground" aria-label="View ad set" onClick={() => toast.info(`View ad set: ${adSet.name}`)}>
+                        <td className="px-4 py-3.5"><StatusBadge status={adSet.status} /></td>
+                        <td className="px-4 py-3.5 text-right font-medium text-[13px] text-[#000000e0] tabular-nums">
+                          {adSet.spent > 0 ? formatCurrency(adSet.spent) : (adSet.spent === 0 ? '$0.00' : '-')}
+                        </td>
+                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
+                          {costPerResult > 0 ? formatCurrency(costPerResult) : '-'}
+                        </td>
+                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
+                          {adSet.impressions > 0 ? formatNumber(adSet.impressions) : (adSet.impressions === 0 ? '0' : '-')}
+                        </td>
+                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
+                          {adSet.clicks > 0 ? formatNumber(adSet.clicks) : (adSet.clicks === 0 ? '0' : '-')}
+                        </td>
+                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
+                          {ctr > 0 ? formatPercent(ctr) : '-'}
+                        </td>
+                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
+                          {cpm > 0 ? formatCurrency(cpm) : '-'}
+                        </td>
+                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
+                          {cpc > 0 ? formatCurrency(cpc) : '-'}
+                        </td>
+                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
+                          {conversions > 0 ? formatNumber(conversions) : (conversions === 0 ? '0' : '-')}
+                        </td>
+                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
+                          {costPerConversion > 0 ? formatCurrency(costPerConversion) : '-'}
+                        </td>
+                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
+                          {leads > 0 ? formatNumber(leads) : (leads === 0 ? '0' : '-')}
+                        </td>
+                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
+                          {costPerLead > 0 ? formatCurrency(costPerLead) : '-'}
+                        </td>
+                        <td className="px-4 py-3.5 text-center w-12">
+                          <button
+                            className="h-6 w-6 rounded hover:bg-black/5 flex items-center justify-center text-[#00000099] hover:text-black focus:outline-none"
+                            aria-label="View ad set"
+                            onClick={() => toast.info(`View ad set: ${adSet.name}`)}
+                          >
                             <ChevronRight className="h-4 w-4" />
-                          </Button>
+                          </button>
                         </td>
                       </tr>
                     );
@@ -292,10 +514,16 @@ export default function AdSetsPage() {
               </table>
             </div>
           )}
+        </div>
 
-          <div className="flex items-center px-4 py-2 border-t border-border bg-[hsl(216,17%,98%)]">
-            <span className="text-xs text-muted-foreground">Showing {sorted.length} of {adSets.length} ad sets</span>
-          </div>
+        {/* Footer */}
+        <div className="flex items-center justify-between px-4 py-3 border-t border-[#e0e0e0] bg-[#f8f9fa] shrink-0 mt-auto">
+          <span className="text-xs text-[#00000099]">Showing {sorted.length} of {adSets.length} ad sets</span>
+          {someSelected && (
+            <span className="text-xs text-[#004182] font-semibold">
+              {selectedArr.length} selected
+            </span>
+          )}
         </div>
       </div>
     </AppLayout>

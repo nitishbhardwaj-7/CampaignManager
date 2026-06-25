@@ -27,10 +27,9 @@ export default function CampaignToggle({
       className={cn(
         'relative inline-flex h-5 w-9 items-center rounded-full border-2 border-transparent',
         'transition-colors duration-200 ease-in-out focus:outline-none',
-        'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
         checked
-          ? 'bg-[hsl(var(--status-active))]'
-          : 'bg-[hsl(220,9%,75%)]',
+          ? 'bg-[#057642]'
+          : 'bg-[#00000060]',
         disabled && 'opacity-50 cursor-not-allowed'
       )}
     >
