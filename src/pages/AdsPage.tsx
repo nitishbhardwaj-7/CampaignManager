@@ -196,8 +196,8 @@ export default function AdsPage() {
                   );
                 } else {
                   badge = (
-                    <span className="text-xs bg-[#0000000f] text-[#00000099] px-2.5 py-0.5 rounded-full font-normal ml-2">
-                      {campaigns.length}
+                    <span className="text-xs text-[#00000099] font-normal ml-2">
+                      {campaigns.length} total
                     </span>
                   );
                 }
@@ -213,8 +213,8 @@ export default function AdsPage() {
                     {filteredAdSetsCount} total
                   </span>
                 ) : (
-                  <span className="text-xs bg-[#0000000f] text-[#00000099] px-2.5 py-0.5 rounded-full font-normal ml-2">
-                    {filteredAdSetsCount}
+                  <span className="text-xs text-[#00000099] font-normal ml-2">
+                    {filteredAdSetsCount} total
                   </span>
                 );
               } else if (tab.id === 'ads') {
@@ -245,8 +245,8 @@ export default function AdsPage() {
                       {filteredAdsCount} total
                     </span>
                   ) : (
-                    <span className="text-xs bg-[#0000000f] text-[#00000099] px-2.5 py-0.5 rounded-full font-normal ml-2">
-                      {filteredAdsCount}
+                    <span className="text-xs text-[#00000099] font-normal ml-2">
+                      {filteredAdsCount} total
                     </span>
                   );
                 }
@@ -439,7 +439,7 @@ export default function AdsPage() {
               {/* Filters dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center text-[13px] text-[#000000e0] hover:underline focus:outline-none select-none">
+                  <button className="flex items-center text-xs text-[#000000e0] hover:underline focus:outline-none select-none">
                     <span>Filters{filterCount > 0 ? <span className="font-medium">({filterCount})</span> : ''}</span>
                     <svg className="h-3.5 w-3.5 text-[#00000099] shrink-0 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M7 10l5 5 5-5z" />
@@ -482,7 +482,7 @@ export default function AdsPage() {
               {/* Columns */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center text-[13px] text-[#000000e0] hover:underline focus:outline-none select-none">
+                  <button className="flex items-center text-xs text-[#000000e0] hover:underline focus:outline-none select-none">
                     <span>Columns: <span className="font-semibold">Performance</span></span>
                     <svg className="h-3.5 w-3.5 text-[#00000099] shrink-0 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M7 10l5 5 5-5z" />
@@ -499,7 +499,7 @@ export default function AdsPage() {
               {/* Breakdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center text-[13px] text-[#000000e0] hover:underline focus:outline-none select-none">
+                  <button className="flex items-center text-xs text-[#000000e0] hover:underline focus:outline-none select-none">
                     <span>Breakdown</span>
                     <svg className="h-3.5 w-3.5 text-[#00000099] shrink-0 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M7 10l5 5 5-5z" />
@@ -524,7 +524,7 @@ export default function AdsPage() {
               {/* Compare */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center text-[13px] text-[#000000e0] hover:underline focus:outline-none select-none">
+                  <button className="flex items-center text-xs text-[#000000e0] hover:underline focus:outline-none select-none">
                     <span>Compare: <span className="font-semibold">{filters.compareMode}</span></span>
                     <svg className="h-3.5 w-3.5 text-[#00000099] shrink-0 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M7 10l5 5 5-5z" />

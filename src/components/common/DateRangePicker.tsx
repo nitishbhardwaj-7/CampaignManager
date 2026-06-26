@@ -135,7 +135,7 @@ export default function DateRangePicker({ value, onChange, label, className, pla
         {plain ? (
           <button
             className={cn(
-              'flex items-center text-[13px] text-[#000000e0] hover:underline focus:outline-none select-none',
+              'flex items-center text-xs text-[#000000e0] hover:underline focus:outline-none select-none',
               className
             )}
           >
