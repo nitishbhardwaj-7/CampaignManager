@@ -216,30 +216,30 @@ export default function CampaignTable() {
 
               {/* Spent */}
               <th
-                className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none"
+                className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left cursor-pointer hover:text-black select-none"
                 onClick={() => handleSort('spent')}
               >
-                <span className="inline-flex items-center justify-end gap-1">
+                <span className="inline-flex items-center justify-start gap-1">
                   Spent <SortIcon col="spent" />
                 </span>
               </th>
 
               {/* Impressions */}
               <th
-                className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none"
+                className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left cursor-pointer hover:text-black select-none"
                 onClick={() => handleSort('impressions')}
               >
-                <span className="inline-flex items-center justify-end gap-1">
+                <span className="inline-flex items-center justify-start gap-1">
                   Impressions <SortIcon col="impressions" />
                 </span>
               </th>
 
               {/* Clicks */}
               <th
-                className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none"
+                className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left cursor-pointer hover:text-black select-none"
                 onClick={() => handleSort('clicks')}
               >
-                <span className="inline-flex items-center justify-end gap-1">
+                <span className="inline-flex items-center justify-start gap-1">
                   Clicks <SortIcon col="clicks" />
                 </span>
               </th>
@@ -272,13 +272,13 @@ export default function CampaignTable() {
                 <td className="px-4 py-3.5 text-xs text-[#00000060] font-medium">
                   -
                 </td>
-                <td className="px-4 py-3.5 text-right text-[13px] font-medium text-[#000000e0] tabular-nums">
+                <td className="px-4 py-3.5 text-left text-[13px] font-medium text-[#000000e0] tabular-nums">
                   {formatCurrency(totalSpent)}
                 </td>
-                <td className="px-4 py-3.5 text-right text-[13px] font-medium text-[#000000e0] tabular-nums">
+                <td className="px-4 py-3.5 text-left text-[13px] font-medium text-[#000000e0] tabular-nums">
                   {formatNumber(totalImpressions)}
                 </td>
-                <td className="px-4 py-3.5 text-right text-[13px] font-medium text-[#000000e0] tabular-nums">
+                <td className="px-4 py-3.5 text-left text-[13px] font-medium text-[#000000e0] tabular-nums">
                   {formatNumber(totalClicks)}
                 </td>
                 <td className="px-4 py-3.5" />
@@ -349,17 +349,17 @@ export default function CampaignTable() {
                   </td>
 
                   {/* Spent */}
-                  <td className="px-4 py-3.5 text-right font-medium text-[13px] text-[#000000e0] tabular-nums">
+                  <td className="px-4 py-3.5 text-left font-medium text-[13px] text-[#000000e0] tabular-nums">
                     {campaign.spent > 0 ? formatCurrency(campaign.spent) : '—'}
                   </td>
 
                   {/* Impressions */}
-                  <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
+                  <td className="px-4 py-3.5 text-left text-[13px] text-[#00000099] tabular-nums">
                     {campaign.impressions > 0 ? formatNumber(campaign.impressions) : '—'}
                   </td>
 
                   {/* Clicks */}
-                  <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
+                  <td className="px-4 py-3.5 text-left text-[13px] text-[#00000099] tabular-nums">
                     {campaign.clicks > 0 ? formatNumber(campaign.clicks) : '—'}
                   </td>
 

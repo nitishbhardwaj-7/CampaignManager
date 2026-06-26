@@ -435,7 +435,7 @@ export default function AdsPage() {
           {/* Filter options layout */}
           <div className="flex flex-col gap-2 pt-1 flex-1">
             {/* Top row filters */}
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
               {/* Filters dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -500,16 +500,28 @@ export default function AdsPage() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center text-xs text-[#000000e0] hover:underline focus:outline-none select-none">
-                    <span>Breakdown</span>
+                    <span>Breakdown: <span className="font-semibold">Conversions</span></span>
                     <svg className="h-3.5 w-3.5 text-[#00000099] shrink-0 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M7 10l5 5 5-5z" />
                     </svg>
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start">
-                  <DropdownMenuItem>None</DropdownMenuItem>
-                  <DropdownMenuItem>Time</DropdownMenuItem>
-                  <DropdownMenuItem>Demographics</DropdownMenuItem>
+                <DropdownMenuContent align="start" className="w-[220px] p-0 py-2 shadow-lg rounded-sm border border-[#0000001f]">
+                  {['Conversions', 'On/Off Network', 'Carousel', 'Impression Device Type', 'Placement', 'Event Stage'].map(option => (
+                    <DropdownMenuItem 
+                      key={option}
+                      className={cn(
+                        "px-4 py-2.5 text-sm rounded-none focus:bg-[#0000000a] cursor-pointer",
+                        option === 'Conversions' ? "font-semibold border-l-[3px] border-black pl-[13px]" : "pl-4"
+                      )}
+                    >
+                      {option}
+                    </DropdownMenuItem>
+                  ))}
+                  <div className="h-px bg-[#0000001f] my-1" />
+                  <DropdownMenuItem className="px-4 py-2.5 text-sm rounded-none focus:bg-[#0000000a] cursor-pointer pl-4">
+                    Clear
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
 
@@ -591,16 +603,19 @@ export default function AdsPage() {
                     <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left cursor-pointer hover:text-black select-none" onClick={() => handleSort('status')}>
                       <span className="inline-flex items-center gap-1">Status <SortIcon col="status" /></span>
                     </th>
-                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left">Format</th>
-                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none" onClick={() => handleSort('spent')}>
-                      <span className="inline-flex items-center justify-end gap-1">Spent <SortIcon col="spent" /></span>
+                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left whitespace-nowrap">Format</th>
+                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left cursor-pointer hover:text-black select-none" onClick={() => handleSort('spent')}>
+                      <span className="inline-flex items-center justify-start gap-1">Spent <SortIcon col="spent" /></span>
                     </th>
-                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none" onClick={() => handleSort('impressions')}>
-                      <span className="inline-flex items-center justify-end gap-1">Impressions <SortIcon col="impressions" /></span>
+                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left cursor-pointer hover:text-black select-none" onClick={() => handleSort('impressions')}>
+                      <span className="inline-flex items-center justify-start gap-1">Impressions <SortIcon col="impressions" /></span>
                     </th>
-                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none" onClick={() => handleSort('clicks')}>
-                      <span className="inline-flex items-center justify-end gap-1">Clicks <SortIcon col="clicks" /></span>
+                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left cursor-pointer hover:text-black select-none" onClick={() => handleSort('clicks')}>
+                      <span className="inline-flex items-center justify-start gap-1">Clicks <SortIcon col="clicks" /></span>
                     </th>
+                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left whitespace-nowrap">Cost per conversion</th>
+                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left whitespace-nowrap">Leads</th>
+                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left whitespace-nowrap">Cost per lead</th>
                     <th className="w-12 bg-white border-b border-[#e0e0e0]" />
                   </tr>
                 </thead>
@@ -623,22 +638,31 @@ export default function AdsPage() {
                       </td>
                       <td className="px-4 py-3.5 text-center text-xs text-[#00000060] font-medium">-</td>
                       <td className="px-4 py-3.5 text-xs text-[#00000060] font-medium">-</td>
-                      <td className="px-4 py-3.5 text-xs text-[#00000060] font-medium">-</td>
-                      <td className="px-4 py-3.5 text-right text-[13px] font-medium text-[#000000e0] tabular-nums">
+                      <td className="px-4 py-3.5 text-xs text-[#00000060] font-medium whitespace-nowrap">-</td>
+                      <td className="px-4 py-3.5 text-left text-[13px] font-medium text-[#000000e0] tabular-nums">
                         {formatCurrency(totalSpent)}
                       </td>
-                      <td className="px-4 py-3.5 text-right text-[13px] font-medium text-[#000000e0] tabular-nums">
+                      <td className="px-4 py-3.5 text-left text-[13px] font-medium text-[#000000e0] tabular-nums">
                         {formatNumber(totalImpressions)}
                       </td>
-                      <td className="px-4 py-3.5 text-right text-[13px] font-medium text-[#000000e0] tabular-nums">
+                      <td className="px-4 py-3.5 text-left text-[13px] font-medium text-[#000000e0] tabular-nums">
                         {formatNumber(totalClicks)}
                       </td>
+                      <td className="px-4 py-3.5 text-left text-[13px] font-medium text-[#000000e0] tabular-nums">-</td>
+                      <td className="px-4 py-3.5 text-left text-[13px] font-medium text-[#000000e0] tabular-nums">-</td>
+                      <td className="px-4 py-3.5 text-left text-[13px] font-medium text-[#000000e0] tabular-nums">-</td>
                       <td className="px-4 py-3.5" />
                     </tr>
                   )}
 
                   {sorted.map(ad => {
                     const selected = selectedAdIds.has(ad.id);
+                    const isLeadCampaign = ad.campaignName?.toLowerCase().includes('lead');
+                    const conversions = isLeadCampaign ? 0 : Math.floor(ad.clicks * 0.05);
+                    const costPerConversion = conversions > 0 ? ad.spent / conversions : 0;
+                    const leads = isLeadCampaign ? Math.floor(ad.clicks * 0.04) : 0;
+                    const costPerLead = leads > 0 ? ad.spent / leads : 0;
+                    
                     return (
                       <tr
                         key={ad.id}
@@ -661,12 +685,21 @@ export default function AdsPage() {
                           />
                         </td>
                         <td className="px-4 py-3.5"><StatusBadge status={ad.status} /></td>
-                        <td className="px-4 py-3.5">
-                          <span className="text-[11px] bg-secondary text-muted-foreground px-2 py-0.5 rounded">{ad.format}</span>
+                        <td className="px-4 py-3.5 whitespace-nowrap">
+                          <span className="text-[11px] bg-secondary text-muted-foreground px-2 py-0.5 rounded whitespace-nowrap">{ad.format}</span>
                         </td>
-                        <td className="px-4 py-3.5 text-right font-medium text-[13px] text-[#000000e0] tabular-nums">{ad.spent > 0 ? formatCurrency(ad.spent) : '—'}</td>
-                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">{ad.impressions > 0 ? formatNumber(ad.impressions) : '—'}</td>
-                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">{ad.clicks > 0 ? formatNumber(ad.clicks) : '—'}</td>
+                        <td className="px-4 py-3.5 text-left font-medium text-[13px] text-[#000000e0] tabular-nums">{ad.spent > 0 ? formatCurrency(ad.spent) : '—'}</td>
+                        <td className="px-4 py-3.5 text-left text-[13px] text-[#00000099] tabular-nums">{ad.impressions > 0 ? formatNumber(ad.impressions) : '—'}</td>
+                        <td className="px-4 py-3.5 text-left text-[13px] text-[#00000099] tabular-nums">{ad.clicks > 0 ? formatNumber(ad.clicks) : '—'}</td>
+                        <td className="px-4 py-3.5 text-left text-[13px] text-[#00000099] tabular-nums">
+                          {isLeadCampaign ? '—' : (costPerConversion > 0 ? formatCurrency(costPerConversion) : '—')}
+                        </td>
+                        <td className="px-4 py-3.5 text-left text-[13px] text-[#00000099] tabular-nums">
+                          {isLeadCampaign ? (leads > 0 ? formatNumber(leads) : '0') : '—'}
+                        </td>
+                        <td className="px-4 py-3.5 text-left text-[13px] text-[#00000099] tabular-nums">
+                          {isLeadCampaign ? (costPerLead > 0 ? formatCurrency(costPerLead) : '—') : '—'}
+                        </td>
                         <td className="px-4 py-3.5 text-center w-12">
                           <button
                             className="h-6 w-6 rounded hover:bg-black/5 flex items-center justify-center text-[#00000099] hover:text-black focus:outline-none"

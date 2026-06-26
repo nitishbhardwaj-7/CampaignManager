@@ -441,7 +441,7 @@ export default function AdSetsPage() {
           {/* Filter options layout */}
           <div className="flex flex-col gap-2 pt-1 flex-1">
             {/* Top row filters */}
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
               {/* Filters dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -506,16 +506,28 @@ export default function AdSetsPage() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center text-xs text-[#000000e0] hover:underline focus:outline-none select-none">
-                    <span>Breakdown</span>
+                    <span>Breakdown: <span className="font-semibold">Conversions</span></span>
                     <svg className="h-3.5 w-3.5 text-[#00000099] shrink-0 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M7 10l5 5 5-5z" />
                     </svg>
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start">
-                  <DropdownMenuItem>None</DropdownMenuItem>
-                  <DropdownMenuItem>Time</DropdownMenuItem>
-                  <DropdownMenuItem>Demographics</DropdownMenuItem>
+                <DropdownMenuContent align="start" className="w-[220px] p-0 py-2 shadow-lg rounded-sm border border-[#0000001f]">
+                  {['Conversions', 'On/Off Network', 'Carousel', 'Impression Device Type', 'Placement', 'Event Stage'].map(option => (
+                    <DropdownMenuItem 
+                      key={option}
+                      className={cn(
+                        "px-4 py-2.5 text-sm rounded-none focus:bg-[#0000000a] cursor-pointer",
+                        option === 'Conversions' ? "font-semibold border-l-[3px] border-black pl-[13px]" : "pl-4"
+                      )}
+                    >
+                      {option}
+                    </DropdownMenuItem>
+                  ))}
+                  <div className="h-px bg-[#0000001f] my-1" />
+                  <DropdownMenuItem className="px-4 py-2.5 text-sm rounded-none focus:bg-[#0000000a] cursor-pointer pl-4">
+                    Clear
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
 
@@ -594,23 +606,23 @@ export default function AdSetsPage() {
                     <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left cursor-pointer hover:text-black select-none whitespace-nowrap" onClick={() => handleSort('status')}>
                       <span className="inline-flex items-center gap-1">Status <SortIcon col="status" /></span>
                     </th>
-                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none whitespace-nowrap" onClick={() => handleSort('spent')}>
-                      <span className="inline-flex items-center justify-end gap-1">Spent <SortIcon col="spent" /></span>
+                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left cursor-pointer hover:text-black select-none whitespace-nowrap" onClick={() => handleSort('spent')}>
+                      <span className="inline-flex items-center justify-start gap-1">Spent <SortIcon col="spent" /></span>
                     </th>
-                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-right whitespace-nowrap">Cost per result</th>
-                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none whitespace-nowrap" onClick={() => handleSort('impressions')}>
-                      <span className="inline-flex items-center justify-end gap-1">Impressions <SortIcon col="impressions" /></span>
+                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left whitespace-nowrap">Cost per result</th>
+                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left cursor-pointer hover:text-black select-none whitespace-nowrap" onClick={() => handleSort('impressions')}>
+                      <span className="inline-flex items-center justify-start gap-1">Impressions <SortIcon col="impressions" /></span>
                     </th>
-                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-right cursor-pointer hover:text-black select-none whitespace-nowrap" onClick={() => handleSort('clicks')}>
-                      <span className="inline-flex items-center justify-end gap-1">Clicks <SortIcon col="clicks" /></span>
+                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left cursor-pointer hover:text-black select-none whitespace-nowrap" onClick={() => handleSort('clicks')}>
+                      <span className="inline-flex items-center justify-start gap-1">Clicks <SortIcon col="clicks" /></span>
                     </th>
-                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-right whitespace-nowrap">Average CTR</th>
-                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-right whitespace-nowrap">Average CPM</th>
-                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-right whitespace-nowrap">Average CPC</th>
-                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-right whitespace-nowrap">Conversions</th>
-                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-right whitespace-nowrap">Cost per conversion</th>
-                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-right whitespace-nowrap">Leads</th>
-                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-right whitespace-nowrap">Cost per lead</th>
+                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left whitespace-nowrap">Average CTR</th>
+                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left whitespace-nowrap">Average CPM</th>
+                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left whitespace-nowrap">Average CPC</th>
+                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left whitespace-nowrap">Conversions</th>
+                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left whitespace-nowrap">Cost per conversion</th>
+                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left whitespace-nowrap">Leads</th>
+                    <th className="px-4 py-3 bg-white text-xs font-medium text-[#000000e0] border-b border-[#e0e0e0] text-left whitespace-nowrap">Cost per lead</th>
                     <th className="w-12 bg-white border-b border-[#e0e0e0]" />
                   </tr>
                 </thead>
@@ -633,37 +645,37 @@ export default function AdSetsPage() {
                       </td>
                       <td className="px-4 py-3.5 text-center text-xs text-[#00000060] font-medium">-</td>
                       <td className="px-4 py-3.5 text-xs text-[#00000060] font-medium">-</td>
-                      <td className="px-4 py-3.5 text-right text-[13px] font-medium text-[#000000e0] tabular-nums">
+                      <td className="px-4 py-3.5 text-left text-[13px] font-medium text-[#000000e0] tabular-nums">
                         {totalSpent > 0 ? formatCurrency(totalSpent) : (totalSpent === 0 ? '$0.00' : '-')}
                       </td>
-                      <td className="px-4 py-3.5 text-right text-[13px] font-medium text-[#000000e0] tabular-nums">
+                      <td className="px-4 py-3.5 text-left text-[13px] font-medium text-[#000000e0] tabular-nums">
                         {aggregateCostPerResult > 0 ? formatCurrency(aggregateCostPerResult) : '-'}
                       </td>
-                      <td className="px-4 py-3.5 text-right text-[13px] font-medium text-[#000000e0] tabular-nums">
+                      <td className="px-4 py-3.5 text-left text-[13px] font-medium text-[#000000e0] tabular-nums">
                         {totalImpressions > 0 ? formatNumber(totalImpressions) : (totalImpressions === 0 ? '0' : '-')}
                       </td>
-                      <td className="px-4 py-3.5 text-right text-[13px] font-medium text-[#000000e0] tabular-nums">
+                      <td className="px-4 py-3.5 text-left text-[13px] font-medium text-[#000000e0] tabular-nums">
                         {totalClicks > 0 ? formatNumber(totalClicks) : (totalClicks === 0 ? '0' : '-')}
                       </td>
-                      <td className="px-4 py-3.5 text-right text-[13px] font-medium text-[#000000e0] tabular-nums">
+                      <td className="px-4 py-3.5 text-left text-[13px] font-medium text-[#000000e0] tabular-nums">
                         {aggregateCtr > 0 ? formatPercent(aggregateCtr) : '-'}
                       </td>
-                      <td className="px-4 py-3.5 text-right text-[13px] font-medium text-[#000000e0] tabular-nums">
+                      <td className="px-4 py-3.5 text-left text-[13px] font-medium text-[#000000e0] tabular-nums">
                         {aggregateCpm > 0 ? formatCurrency(aggregateCpm) : '-'}
                       </td>
-                      <td className="px-4 py-3.5 text-right text-[13px] font-medium text-[#000000e0] tabular-nums">
+                      <td className="px-4 py-3.5 text-left text-[13px] font-medium text-[#000000e0] tabular-nums">
                         {aggregateCpc > 0 ? formatCurrency(aggregateCpc) : '-'}
                       </td>
-                      <td className="px-4 py-3.5 text-right text-[13px] font-medium text-[#000000e0] tabular-nums">
+                      <td className="px-4 py-3.5 text-left text-[13px] font-medium text-[#000000e0] tabular-nums">
                         {totalConversions > 0 ? formatNumber(totalConversions) : (totalConversions === 0 ? '0' : '-')}
                       </td>
-                      <td className="px-4 py-3.5 text-right text-[13px] font-medium text-[#000000e0] tabular-nums">
+                      <td className="px-4 py-3.5 text-left text-[13px] font-medium text-[#000000e0] tabular-nums">
                         {aggregateCostPerConversion > 0 ? formatCurrency(aggregateCostPerConversion) : '-'}
                       </td>
-                      <td className="px-4 py-3.5 text-right text-[13px] font-medium text-[#000000e0] tabular-nums">
+                      <td className="px-4 py-3.5 text-left text-[13px] font-medium text-[#000000e0] tabular-nums">
                         {totalLeads > 0 ? formatNumber(totalLeads) : (totalLeads === 0 ? '0' : '-')}
                       </td>
-                      <td className="px-4 py-3.5 text-right text-[13px] font-medium text-[#000000e0] tabular-nums">
+                      <td className="px-4 py-3.5 text-left text-[13px] font-medium text-[#000000e0] tabular-nums">
                         {aggregateCostPerLead > 0 ? formatCurrency(aggregateCostPerLead) : '-'}
                       </td>
                       <td className="px-4 py-3.5" />
@@ -718,37 +730,37 @@ export default function AdSetsPage() {
                           />
                         </td>
                         <td className="px-4 py-3.5"><StatusBadge status={adSet.status} /></td>
-                        <td className="px-4 py-3.5 text-right font-medium text-[13px] text-[#000000e0] tabular-nums">
+                        <td className="px-4 py-3.5 text-left font-medium text-[13px] text-[#000000e0] tabular-nums">
                           {adSet.spent > 0 ? formatCurrency(adSet.spent) : (adSet.spent === 0 ? '$0.00' : '-')}
                         </td>
-                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
+                        <td className="px-4 py-3.5 text-left text-[13px] text-[#00000099] tabular-nums">
                           {costPerResult > 0 ? formatCurrency(costPerResult) : '-'}
                         </td>
-                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
+                        <td className="px-4 py-3.5 text-left text-[13px] text-[#00000099] tabular-nums">
                           {adSet.impressions > 0 ? formatNumber(adSet.impressions) : (adSet.impressions === 0 ? '0' : '-')}
                         </td>
-                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
+                        <td className="px-4 py-3.5 text-left text-[13px] text-[#00000099] tabular-nums">
                           {adSet.clicks > 0 ? formatNumber(adSet.clicks) : (adSet.clicks === 0 ? '0' : '-')}
                         </td>
-                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
+                        <td className="px-4 py-3.5 text-left text-[13px] text-[#00000099] tabular-nums">
                           {ctr > 0 ? formatPercent(ctr) : '-'}
                         </td>
-                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
+                        <td className="px-4 py-3.5 text-left text-[13px] text-[#00000099] tabular-nums">
                           {cpm > 0 ? formatCurrency(cpm) : '-'}
                         </td>
-                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
+                        <td className="px-4 py-3.5 text-left text-[13px] text-[#00000099] tabular-nums">
                           {cpc > 0 ? formatCurrency(cpc) : '-'}
                         </td>
-                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
+                        <td className="px-4 py-3.5 text-left text-[13px] text-[#00000099] tabular-nums">
                           {conversions > 0 ? formatNumber(conversions) : (conversions === 0 ? '0' : '-')}
                         </td>
-                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
+                        <td className="px-4 py-3.5 text-left text-[13px] text-[#00000099] tabular-nums">
                           {costPerConversion > 0 ? formatCurrency(costPerConversion) : '-'}
                         </td>
-                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
+                        <td className="px-4 py-3.5 text-left text-[13px] text-[#00000099] tabular-nums">
                           {leads > 0 ? formatNumber(leads) : (leads === 0 ? '0' : '-')}
                         </td>
-                        <td className="px-4 py-3.5 text-right text-[13px] text-[#00000099] tabular-nums">
+                        <td className="px-4 py-3.5 text-left text-[13px] text-[#00000099] tabular-nums">
                           {costPerLead > 0 ? formatCurrency(costPerLead) : '-'}
                         </td>
                         <td className="px-4 py-3.5 text-center w-12">

@@ -387,7 +387,7 @@ export default function CampaignsDashboard() {
           {/* Filter options layout */}
           <div className="flex flex-col gap-2 pt-1 flex-1">
             {/* Top row filters */}
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
               {/* Filters dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -449,16 +449,28 @@ export default function CampaignsDashboard() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center text-xs text-[#000000e0] hover:underline focus:outline-none select-none">
-                    <span>Breakdown</span>
+                    <span>Breakdown: <span className="font-semibold">Conversions</span></span>
                     <svg className="h-3.5 w-3.5 text-[#00000099] shrink-0 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M7 10l5 5 5-5z" />
                     </svg>
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start">
-                  <DropdownMenuItem>None</DropdownMenuItem>
-                  <DropdownMenuItem>Time</DropdownMenuItem>
-                  <DropdownMenuItem>Demographics</DropdownMenuItem>
+                <DropdownMenuContent align="start" className="w-[220px] p-0 py-2 shadow-lg rounded-sm border border-[#0000001f]">
+                  {['Conversions', 'On/Off Network', 'Carousel', 'Impression Device Type', 'Placement', 'Event Stage'].map(option => (
+                    <DropdownMenuItem 
+                      key={option}
+                      className={cn(
+                        "px-4 py-2.5 text-sm rounded-none focus:bg-[#0000000a] cursor-pointer",
+                        option === 'Conversions' ? "font-semibold border-l-[3px] border-black pl-[13px]" : "pl-4"
+                      )}
+                    >
+                      {option}
+                    </DropdownMenuItem>
+                  ))}
+                  <div className="h-px bg-[#0000001f] my-1" />
+                  <DropdownMenuItem className="px-4 py-2.5 text-sm rounded-none focus:bg-[#0000000a] cursor-pointer pl-4">
+                    Clear
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
 
