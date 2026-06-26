@@ -46,7 +46,7 @@ export default function StatusBadge({ status, className }: StatusBadgeProps) {
         className
       )}
     >
-      <span className={cn('w-1.5 h-1.5 rounded-full shrink-0', config.dot)} />
+
       {config.label}
     </span>
   );
